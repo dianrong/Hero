@@ -1,0 +1,387 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<dom-module id="dr-cell1">
+    <style type="text/css">
+    div{
+      display: block;
+      position: relative;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+      background-color: #fff;
+      left: 15px;
+    }
+    #title{
+      position: absolute;
+      height: 100%;
+      display: block;
+      line-height: 100%;
+    }
+    #description{
+      position: absolute;
+      height: 100%;
+      display: block;
+      line-height: 100%;
+      right: 40px;
+    }
+    #next{
+      position: absolute;
+      display: block;
+      font-size: 13px;
+      top: 0px;
+      right: 20px;
+      color: #ddd;
+    }
+    </style>
+  <template>
+    <div id='heroContent' on-Tap='onTap'>
+      <p id='title'></p>
+      <p id='description'></p>
+      <p id='next'>></p>
+    </div>
+  </template>
+</dom-module>
+
+<dom-module id="dr-cell2">
+    <style type="text/css">
+    div{
+      display: block;
+      position: relative;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+      background-color: #fff;
+      left: 15px;
+    }
+    #title{
+      position: absolute;
+      display: block;
+      height: 100%;
+      line-height: 100%;
+    }
+    #description{
+      position: absolute;
+      display: block;
+      height: 100%;
+      line-height: 100%;
+      right: 40px;
+    }
+    #next{
+      position: absolute;
+      display: block;
+      top: 0px;
+      font-size: 13px;
+      right: 20px;
+      color: #ddd;
+    }
+    </style>
+  <template>
+    <div id='heroContent' on-Tap='onTap'>
+      <p id='title'></p>
+      <p id='description'></p>
+      <p id='next'>></p>
+    </div>
+  </template>
+</dom-module>
+<dom-module id="dr-cell5">
+    <style type="text/css">
+    div{
+      display: block;
+      position: relative;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+      background-color: #fff;
+      left: 15px;
+    }
+    #title{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+    }
+    #description{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+      right: 40px;
+    }
+    #next{
+      position: absolute;
+      display: block;
+      top: 0px;
+      font-size: 13px;
+      right: 20px;
+      color: #ddd;
+    }
+    </style>
+  <template>
+    <div id='heroContent' on-Tap='onTap'>
+      <p id='title'></p>
+      <p id='description'></p>
+      <p id='next'>></p>
+    </div>
+  </template>
+</dom-module>
+<dom-module id="dr-cell16">
+    <style type="text/css">
+    div{
+      display: block;
+      position: relative;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+      background-color: #fff;
+      left: 15px;
+    }
+    #title{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+    }
+    #description{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+      right: 40px;
+    }
+    #next{
+      position: absolute;
+      display: block;
+      top: 0px;
+      font-size: 13px;
+      right: 20px;
+      color: #ddd;
+    }
+    </style>
+  <template>
+    <div id='heroContent' on-Tap='onTap'>
+      <p id='title'></p>
+      <p id='description'></p>
+      <p id='next'>></p>
+    </div>
+  </template>
+</dom-module>
+<dom-module id="dr-cell141">
+    <style type="text/css">
+    div{
+      display: block;
+      position: relative;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+      background-color: #fff;
+      left: 15px;
+      right: 15px;
+      margin: 10px;
+      border-radius: 2px;
+    }
+    #title{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+    }
+    #description{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+      right: 40px;
+    }
+    </style>
+  <template>
+    <div id='heroContent' on-Tap='onTap'>
+      <p id='title'></p>
+      <p id='description'></p>
+    </div>
+  </template>
+</dom-module>
+
+<dom-module id="dr-cell142">
+    <style type="text/css">
+    div{
+      display: block;
+      position: relative;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+      background-color: #fff;
+      left: 15px;
+      right: 15px;
+      margin: 10px;
+      border-radius: 2px;
+    }
+    #title{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+    }
+    #description{
+      position: absolute;
+      height: 100%;
+      line-height: 100%;
+      right: 40px;
+    }
+    </style>
+  <template>
+    <div id='heroContent' on-Tap='onTap'>
+      
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "dr-cell1",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.title) {
+          this.$.title.innerHTML = json.title.text;
+        };
+        if (json.description) {
+          this.$.description.innerHTML = json.description.text;
+        };
+      },
+      onTap:function(){
+        var json = this.json
+        if (json.action) {
+          this.controller.on(json.action)
+        }else{
+          this.controller.on(json)
+        }
+      }
+  });
+  Polymer({
+    is: "dr-cell2",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.title) {
+          this.$.title.innerHTML = json.title.text;
+        };
+        if (json.description) {
+          this.$.description.innerHTML = json.description.text;
+        };
+      },
+      onTap:function(){
+        var json = this.json
+        if (json.action) {
+          this.controller.on(json.action)
+        }else{
+          this.controller.on(json)
+        }
+      }
+    });
+  Polymer({
+    is: "dr-cell5",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.title) {
+          this.$.title.innerHTML = json.title.text;
+        };
+        if (json.description && json.description.text) {
+          this.$.description.innerHTML = json.description.text;
+        };
+      },
+      onTap:function(){
+        var json = this.json
+        if (json.action) {
+          this.controller.on(json.action)
+        }else{
+          this.controller.on(json)
+        }
+      }
+    });
+  Polymer({
+    is: "dr-cell16",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.title) {
+          this.$.title.innerHTML = json.title.text;
+        };
+        if (json.description && json.description.text) {
+          this.$.description.innerHTML = json.description.text;
+        };
+      },
+      onTap:function(){
+        var json = this.json
+        if (json.action) {
+          this.controller.on(json.action)
+        }else{
+          this.controller.on(json)
+        }
+      }
+    });
+  Polymer({
+    is: "dr-cell141",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.title) {
+          this.$.title.innerHTML = json.title.text;
+        };
+        if (json.description) {
+          this.$.description.innerHTML = json.description.text;
+        };
+      },
+      onTap:function(){
+        var json = this.json
+        if (json.action) {
+          this.controller.on(json.action)
+        }else{
+          this.controller.on(json)
+        }
+      }
+    });
+  Polymer({
+    is: "dr-cell142",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.title) {
+          this.$.title.innerHTML = json.title.text;
+        };
+        if (json.description) {
+          this.$.description.innerHTML = json.description.text;
+        };
+      },
+      onTap:function(){
+        var json = this.json
+        if (json.action) {
+          this.controller.on(json.action)
+        }else{
+          this.controller.on(json)
+        }
+      }
+    })
+
+</script>

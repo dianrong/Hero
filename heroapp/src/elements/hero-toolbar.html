@@ -1,0 +1,104 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="hero-behavior.html">
+<link rel="import" href="hero-button.html">
+
+<dom-module id="hero-toolbar">
+    <style type="text/css">
+    div{
+      display: inline-block;
+      position: absolute;
+      overflow: hidden;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 44px;
+      background: #303e53;
+    }
+    #title{
+      display: inline-block;
+      color: #cccccc;
+      width: 100%;
+      line-height: 44px;
+      text-align: center;
+    }
+
+    </style>
+  <template>
+    <div id='heroContent'>
+        <hero-button json={{left}} id='left'></hero-button>
+        <span id='title'>{{title}}</span>
+        <hero-button json={{right}} id='right'></hero-button>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "hero-toolbar",
+      behaviors: [HeroBehavior],
+      properties: {
+        title:{
+          type: String
+        },
+        right:{
+          type: String
+        },
+        left:{
+          type: String
+        },
+      },      
+      on: function(json) {
+        if (json.title) {
+          this.title = json.title;
+        };
+        if (json.backgroundColor) {
+          this.$.heroContent.style.background = '#'+json.backgroundColor;
+        };
+        if (json.right) {
+          var right = json.right;
+          right.tinyColor = '999999';
+          right.frame = {r:'10',y:'5',w:'88',h:'34',p:{w:window.innerWidth,h:window.innerHeight}};
+          this.right = right;
+
+        };
+        if (json.left) {
+          var left = json.left;
+          left.tinyColor = '999999';
+          left.frame = {x:'10',y:'5',w:'66',h:'34',p:{w:window.innerWidth,h:window.innerHeight}};
+          this.left = left;
+        };
+      },
+    })
+</script>

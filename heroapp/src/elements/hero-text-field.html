@@ -1,0 +1,108 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+ <dom-module id="hero-text-field">
+     <style type="text/css">
+    div{
+      display: inline-block;
+      position: absolute;
+      overflow: hidden;
+    }
+    paper-input {display: block;margin: 0px;padding: 0px;width:100%;height:100%;}
+    </style>
+
+  <template>
+    <div id='heroContent'>
+      <paper-input label="{{placeHolder}}" type="{{type}}" id='input' value='{{text}}' color='{{color}}'></paper-input>
+    </div>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: "hero-text-field",
+    behaviors: [HeroBehavior],
+    properties: {
+        text:{
+          type: String,
+          observer: 'textChange'
+        },
+        placeHolder:{
+          type: String
+        },
+        type:{
+          type: String
+        },
+        color:{
+          type: String
+        },
+        textFieldDidEditing:{
+          type: Object
+        }
+    },      
+    on: function(json) {
+      if (json.textFieldDidEditing) {
+        this.textFieldDidEditing = json.textFieldDidEditing;
+      };
+      if (json.text) {
+        this.text = json.text;
+        if (this.textFieldDidEditing) {
+          var that = this;
+          setTimeout(function(){
+            that.textFieldDidEditing.value = that.text;
+            that.controller.on(that.textFieldDidEditing);
+          },500);
+        };
+      };
+      if (json.textColor) {
+        this.color = json.textColor;
+      };
+      if (json.placeHolder) {
+        this.placeHolder = json.placeHolder;
+        this.$.heroContent.style.top = parseFloat(this.$.heroContent.style.top)-10+'px';
+        this.$.heroContent.style.height = parseFloat(this.$.heroContent.style.height)+10+'px';
+      };
+      if (json.secure) {
+        this.type = "password";
+      }else{
+        this.type = "";
+      };
+    },
+    ready: function(){
+      console.log('hero text field ready')
+    },
+    textChange: function(text){
+      if(this.textFieldDidEditing){
+        this.textFieldDidEditing.value = text;
+        this.controller.on(this.textFieldDidEditing);
+      }
+    },
+
+    })
+</script>

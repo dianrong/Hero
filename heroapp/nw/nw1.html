@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script>
+      function test(show) {
+        var cdt = document.getElementById('cdt');
+        var wv = document.getElementById('wv');
+        wv.showDevTools(show, cdt);
+      }
+    </script>
+  </head>
+  <body>
+    <webview id="wv" src="http://localhost:3000/cash.html" style="display:inline-block;width:100%;height:50%"></webview>
+    <button onclick="test(true)">show</button>
+
+    <webview id="cdt" src="about:blank" style="display:inline-block;width:100%;height:50%"></webview>
+   
+    <button onclick="test(true)">show</button>
+  </body>
+</html>

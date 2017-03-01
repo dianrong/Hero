@@ -1,0 +1,111 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html" >
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html" >
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-iconset/iron-iconset.html">
+<link rel="import" href="menu-button.html">
+
+<dom-module id="menu-element" >
+
+  <template>
+    <paper-toolbar>
+      <div>Application</div>
+    </paper-toolbar>
+    <template is="dom-repeat" items="{{owner}}">
+      <paper-item  onclick='this.nextElementSibling.toggle()'>
+        <iron-icon icon={{item.icon}}></iron-icon>
+        <div><span>{{item.title}}</span></div>
+      </paper-item>
+      <iron-collapse opened='true'>
+            <menu-button  on-tap="selectItem"><span>aaaa</span></menu-button>
+            <paper-button raised on-tap="selectItem"><span>bbbb</span></paper-button>
+            <paper-button on-tap="selectItem"><span>cccc</span></paper-button>
+            <paper-button on-tap="selectItem"><span>dddd</span></paper-button>
+            <paper-button on-tap="selectItem"><span>eeee</span></paper-button>
+      </iron-collapse>
+
+    </template>
+  </template>
+</dom-module>
+
+<script>
+
+  Polymer({
+    is: "menu-element",
+    ready: function() {
+        this.push('owner', { title: 'Jack', icon: 'menu',id:'three' });
+    },
+    listeners: {
+
+    },
+    regularTap: function(e) {
+      // document.querySelector('#two').toggle();
+    },
+    JackTap: function(e) {
+      alert("It was special tapping");
+    },
+    selectItem:function(e){
+      this.fire('iron-signal', {name: "menuselect", data: e.target.textContent});
+    },
+    fooSignal:function(e){
+      alert(e.detail);
+    },
+    properties:{
+      owner: {
+        type: Array,
+        value: [
+          {
+            title:"sldl",
+            icon:"menu",
+            id:"one"
+          },
+          {
+            title:"bbbb",
+            icon:"faviory",
+            id:"two"
+
+          }
+
+        ]
+      }
+    }
+  });
+
+</script>

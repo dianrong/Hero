@@ -1,0 +1,141 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<dom-module id="hero-label">
+    <style type="text/css">
+    div{
+      display: block;
+      position: absolute;
+      overflow: hidden;
+      pointer-events:none;
+    }
+    #text{
+      display: block;
+    }
+    </style>
+  <template>
+    <div id='heroContent'>
+      <span id='text'></span>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "hero-label",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.text !== undefined) {
+          this.$.text.innerHTML = json.text;
+          if (!json.hasOwnProperty("numberOfLines") ) {
+            this.$.text.style.lineHeight = this.$.heroContent.style.height;
+          };
+        };
+        if (json.size) {
+          this.$.text.style.fontSize = json.size + 'px';
+        };
+        if (json.alignment) {
+          this.$.text.style.textAlign = json.alignment;
+        };
+        if (json.textColor) {
+          this.$.text.style.color = APP.str2Color(json.textColor);
+        };
+        if (json.font) {
+          this.$.text.style.fontWeight = json.font;
+        };
+        if (json.attribute) {
+          this.$.text.style.display = 'none';
+          var texts = [];
+          for (var i = 0; i < json.text.length; i++) {
+            var t = document.createElement('span');
+            t.innerHTML = json.text[i];
+            t.style.display = 'inline';
+            texts.push(t);
+          };
+          for(var key in json.attribute){
+            if (key.substring(0,6) == 'color(') {
+              var rangeStr = key.replace('color(','');
+              var rangeStr = rangeStr.replace(')','');
+              var lo = parseInt(rangeStr.split(',')[0]);
+              var le = parseInt(rangeStr.split(',')[1]);
+              for (var i = lo; i < le+lo; i++) {
+                texts[i].style.color = APP.str2Color(json.attribute[key]);
+              };
+            };
+            if (key.substring(0,11) == 'middleline(') {
+              var rangeStr = key.replace('middleline(','');
+              var rangeStr = rangeStr.replace(')','');
+              var lo = parseInt(rangeStr.split(',')[0]);
+              var le = parseInt(rangeStr.split(',')[1]);
+              for (var i = lo; i < le+lo; i++) {
+                texts[i].style.textDecoration = 'line-through';
+              };
+            };
+            if (key.substring(0,5) == 'size(') {
+              var rangeStr = key.replace('size(','');
+              var rangeStr = rangeStr.replace(')','');
+              var lo = parseInt(rangeStr.split(',')[0]);
+              var le = parseInt(rangeStr.split(',')[1]);
+              for (var i = lo; i <  le+lo; i++) {
+                texts[i].style.fontSize = (json.attribute[key])+'px';
+              };
+            };
+            if (key.substring(0,3) == 'gap') {
+              for (var i = 0; i < texts.length; i++) {
+                texts[i].style.lineHeight = (json.attribute[key])+'px';
+              };
+            };
+          }
+          var p = document.createElement('p');
+          p.style.display = 'block';
+          p.style.margin='0px';
+          p.style.color=this.$.text.style.color;
+          p.style.fontSize = this.$.text.style.fontSize;
+          p.style.textAlign = this.$.text.style.textAlign;
+          while (this.$.heroContent.lastChild) {
+             this.$.heroContent.removeChild(this.$.heroContent.lastChild);
+          }
+          this.$.heroContent.appendChild(p);
+          for (var i = 0; i < texts.length; i++) {
+            p.appendChild(texts[i]);
+          };
+        };
+        if(json.attributedText){
+          this.$.text.innerHTML = json.attributedText;
+        }
+        if (json.hAuto) {
+          this.async(function(){
+            this.oon({frame:{x:parseFloat(this.$.heroContent.style.left)+'',y:parseFloat(this.$.heroContent.style.top)+'',w:
+              parseFloat(this.$.heroContent.style.width)+'',h:parseFloat(this.$.heroContent.style.height)+60+''}});
+          },100);
+        };
+      }
+    })
+</script>

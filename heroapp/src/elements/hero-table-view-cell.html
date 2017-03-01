@@ -1,0 +1,99 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<dom-module id="hero-table-view-cell">
+    <style type="text/css">
+    :host {
+      display: block;
+      position:relative;
+      width: 100%;
+      margin: 0px;
+      padding: 0px;
+      border: 0px;
+      overflow: hidden;
+      background-color: #fff;
+      left: 15px;
+    }
+    paper-ripple{
+      width: 100%;
+      height: 100%;
+    }
+    p{
+      display: inline-block;
+      position: absolute;
+      overflow: hidden;
+      margin: 0px;padding: 0px;width: 100%;height: 100%;
+    }
+    </style>
+  <template>
+    <div id='heroContent' on-Tap='onTap' >
+      <paper-ripple></paper-ripple>
+      <p id='title'></p>
+      <p id='other'></p>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "hero-table-view-cell",
+      behaviors: [HeroBehavior],
+      on: function(json) {
+        if (json.textValue) {
+          this.$.title.innerHTML = json.title;
+          this.$.other.innerHTML = json.textValue;
+          this.$.title.style.lineHeight = json.height?json.height+'px':'44px';
+          this.$.other.style.lineHeight = json.height?json.height+'px':'44px';
+          this.$.title.style.width = '50%';
+          this.$.other.style.width = '50%';
+          this.$.other.style.right = '10px';
+          this.$.other.style.textAlign = 'right';
+        }else if(json.detailText){
+          this.$.title.innerHTML = json.title;
+          this.$.other.innerHTML = json.detailText;
+          this.$.title.style.lineHeight = json.height?json.height/3+'px':'15px';
+          this.$.other.style.lineHeight = json.height?json.height*2/3+'px':'29px';
+          this.$.title.style.top = '2px';
+          this.$.other.style.top = '16px';
+        }else{
+          this.$.title.innerHTML = json.title;
+          this.$.title.style.lineHeight = json.height?json.height+'px':'44px';
+        };
+      },
+      onTap:function(){
+        var json = this.json
+        if (json.action) {
+          this.controller.on(json.action)
+        }else{
+          this.controller.on(json)
+        }
+      }
+    })
+</script>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<script type="text/javascript" src="js/hero.js"></script>
+	<script type="text/javascript">
+	var entryList = [
+    {
+		sectionTitle:'页面测试',
+		rows:[
+			{title:'current host',url:host+'/test/page_test/pages.html'},
+		]
+	},
+	{
+		sectionTitle:'元素单元测试',
+		rows:[
+			{title:'current host',url:host+'/test/unit_test/component.html'},
+		]
+	},
+	{
+		sectionTitle:'临时型测试',
+		rows:[
+			{title:'current host',url:host+'/test/me.html'},
+		]
+	}
+	]
+	API.special_logic = function(data){
+		if (data.url) {
+			API.out({command:'goto:'+data.url});
+		};
+	};
+
+	var ui = {
+	version:-1,
+	nav:{
+		title:"测试入口",
+		leftItems:[{title:"关闭",click:{command:'dismiss'}}],
+	},
+	views:
+	[
+		{
+			class:'DRTableView',
+			frame:{w:'1x',h:'1x'},
+			name:'list',
+			data:entryList,
+		},
+
+	]
+};
+
+</script>
+</head>
+</html>

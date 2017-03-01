@@ -1,0 +1,178 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<dom-module id="hero-image-view">
+  <style type="text/css">
+    div {display: inline-block;position: absolute;overflow: hidden;}
+    img {display: block;margin: 0px;padding: 0px;width: 100%;height: 100%;border: 0px;}
+    input {
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      position: absolute;
+      opacity: 0; 
+      margin: 0;
+      padding: 0;
+    }
+    .dashed-content{
+       border: 2px dashed gray;
+       box-sizing: border-box;
+       -webkit-box-sizing: border-box;
+    }
+    
+    #plus{
+      font-weight: bold;
+      font-size: 3em;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <template>
+    <div id='heroContent'>
+      <img id='img' src={{url}}></img>
+<!--  <div id='plus'>
+        +
+      </div>
+      <input id='file' type='file' accept="image/jpeg,image/png"></input>
+ -->    
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  // var uploadUrl,
+  //   name,
+  //   uploadName,
+  //   isStaticImage = false;
+  
+  Polymer({
+    is: "hero-image-view",
+      behaviors: [HeroBehavior],
+      properties: {
+        title:{
+          type: String
+        },
+        url:{
+          type: String
+        },
+        actionObject:{
+          type:Object,
+        }
+      },      
+      on: function(json) {
+        if (json.image) {
+           isStaticImage=true;
+          if (json.image.substring(0,4) === 'http') {
+            this.url = json.image;
+          }else{
+            if (json.image.search(/\./)>0) {
+              this.url = window.location.protocol+'//'+ window.location.host + '/images/' +json.image;
+            }else{
+              this.url = window.location.protocol+'//'+ window.location.host + '/images/' +json.image+'.png';
+            };
+          };
+        }
+        // else{
+        //   isStaticImage=false;
+        // }
+        // if (json.localImage) {
+        //   // this.$.content.removeChild(this.$.img);
+        // }
+        // uploadUrl=json.uploadUrl;
+        // name=json.uploadName && json.uploadName.split('.')[0];
+        // uploadName=json.uploadName;
+        // if(json.localImageReady){
+        //   this.actionObject=json.localImageReady;
+        // }
+      },
+      ready: function(){
+        // if(!isStaticImage){
+        //   var that = this,
+        //   // reader=new FileReader(),
+        //   renderReader=new FileReader();
+          
+        // this.$.content.className+=' dashed-content';
+        // this.$.content.removeChild(this.$.img);
+          
+        // function post() {
+        //   if (uploadUrl) {
+        //     var formData = new FormData();
+        //     formData.append(uploadName, that.$.file.files[0]);
+        //     var request = new XMLHttpRequest();
+        //     request.open("POST", uploadUrl);
+        //     request.onload = function (e) {
+        //       if (request.status === 200) {
+        //         renderReader.readAsDataURL(that.$.file.files[0]);
+        //       }
+        //       else {
+        //         // failed to upload image to server.
+        //         API.out({datas:{name:'toast',text:'图片上传失败'}});
+        //       }
+        //     }
+        //     request.send(formData);
+        //   }
+        // }
+        
+        // // reader.onload = post;
+        // renderReader.onload = function () {
+        //   that.$.content.removeChild(that.$.plus);
+        //   that.$.content.removeChild(that.$.file);
+        //   that.$.content.className = that.$.content.className.replace('dashed-content', '');
+        //   img = document.createElement('img');
+        //   img.src = this.result;
+        //   img.style.width = that.$.content.style.width;
+        //   img.style.height = that.$.content.style.height;
+        //   that.$.content.appendChild(img);
+
+        //   API.out({ command: 'stopLoading' });
+        //   // notify that the image uploaded
+        //   that.actionObject.value = true;
+        //   API.out(that.actionObject);
+        // }
+
+        // this.$.file.addEventListener('change', function () {
+        //   API.out({ command: 'showLoading' });
+        //   post();
+        //   // reader.readAsBinaryString(that.$.file.files[0]);
+        // }, false);
+        // }
+        // else {
+        //   // remove file and plus
+        //   this.$.content.removeChild(this.$.file);
+        //   this.$.content.removeChild(this.$.plus);
+        // }
+      }
+    })
+</script>

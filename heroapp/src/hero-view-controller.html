@@ -1,0 +1,356 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<script>
+    HeroViewController = {
+      behaviors: [HeroBehavior],
+      properties: {
+        url: {
+          type: String,
+          observer: 'setWebUrl',
+        },
+        title: {
+          type: String,
+        },
+        view: {
+          type: Object,
+          // observer: 'setUI',
+        },
+        controller: {
+          type: Object,
+          // observer: 'setController'
+        },
+        heroContent: {
+          type: Object,
+        },
+        ui2data: {
+          type: Object,
+        },
+        initData: {
+          type: Object,
+        },
+        appearObject:{
+          type: Object,
+        }
+      },
+      getInitData:function(){
+        if (localStorage.boot) {
+            this.initData = JSON.parse(localStorage.boot);
+            localStorage.boot = '';
+        };
+        this.initData = this.initData || {};
+        var params = (this.url.split('?')[1] || '').split('&');
+        for(var param in params) {
+            if (params.hasOwnProperty(param)){
+                paramParts = params[param].split('=');
+                this.initData[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
+             }
+        }
+        return this.initData;
+      },
+      findViewByname:function(name,root){
+        if (!name) {
+          return undefined;
+        };
+        if (name == root.id) {
+          return root;
+        };
+        if(root.$ && root.$.heroContent){
+          for (var i = 0; i < root.$.heroContent.children.length; i++) {
+            var v = this.findViewByname(name,root.$.heroContent.children[i]);
+            if (v) {
+              return v;
+            };
+          };
+        }
+        for (var i = 0; i < root.children.length; i++) {
+          var v = this.findViewByname(name,root.children[i]);
+          if (v) {
+            return v;
+          };
+        };
+      },
+      ui2Data:function(observeUI){
+          if (Array.isArray(observeUI)) {
+              for (var i = 0; i < observeUI.length; i++) {
+                  this.ui2Data(observeUI[i]);
+              };
+          }else if(observeUI.subViews){
+              this.ui2Data(observeUI.subViews);
+          }
+          if (observeUI.name) {
+              ui2Data['_'+observeUI.name] = '';
+              ui2Data.__defineSetter__(observeUI.name, function(v) {
+                  ui2Data['_'+observeUI.name] = v;
+                  var data = {name:observeUI.name};
+                  if (typeof v == 'string') {
+                      data.text = v;
+                  }else{
+                      API.merge(data,v);
+                  }
+                  API.out({datas:data});
+              });
+              ui2Data.__defineGetter__(observeUI.name, function() {
+                  return ui2Data['_'+observeUI.name];
+              });
+
+          };
+      },
+      attached:function(){
+        if (window.ui && window.API) {
+          this.view = ui;
+          this.controller = API;
+          API.page = this;
+          var heroContent = document.createElement('div');
+          heroContent.style.display = 'block';
+          heroContent.style.position = 'absolute';
+          heroContent.style.overflow = 'scroll';
+          heroContent.style.height = '100%';
+          heroContent.style.width = '100%';
+          this.appendChild(heroContent);
+          this.heroContent = heroContent;
+          if (this.view.backgroundColor) {
+            heroContent.style.backgroundColor= APP.str2Color(this.view.backgroundColor);
+          }else{
+            heroContent.style.backgroundColor='#ffffff';
+          }
+          if (this.view !== 'blank') {
+              API.out({ui:this.view});
+          };
+          this.getInitData();
+          this.controller.boot(this.initData);
+          this.viewWillAppear();
+          if (this.initData.test) {
+              var js = document.createElement('script');
+              js.src = this.url.replace(/html/,'js');
+              document.head.appendChild(js);
+              js = document.createElement('script');
+              js.src = host+'/test/js/test.js';
+              document.head.appendChild(js);
+          };
+          if (localStorage.phone) {
+              var js = document.createElement('script');
+              js.src = path+'/js/log.js';
+              document.head.appendChild(js);
+          };
+          if (ui && ui.views) {
+              this.ui2Data(ui.views);
+          };
+
+        }
+      },
+      ready:function(){
+      },
+      viewWillAppear:function(){
+        if (this.view && this.view.nav) {
+          APP.setNav(this.view.nav);
+          if (this.view.tintColor) {
+            this.view.nav.tintColor = this.view.tintColor;
+          }
+        }else{
+          APP.setNav({title:this.title});
+        }
+        if (this.appearObject) {
+          this.controller.in(this.appearObject);
+        };
+      },
+      viewWillDisappear:function(){
+
+      },
+      setWebUrl:function(url){
+        if (!API) {
+          var iframe = document.createElement('iframe');
+          iframe.style.display = 'inline-block';
+          iframe.style.position = 'absolute';
+          iframe.style.overflow = 'hidden';
+          iframe.style.top = '0px';
+          iframe.style.left = '0px';
+          iframe.style.border = '0px';
+          iframe.style.borderWidth = '0px';
+          iframe.style.height = '100%';
+          iframe.style.width = '100%';
+          iframe.src = url;
+          this.appendChild(iframe);
+          var that  = this;
+          iframe.onload = function(){
+            that.title = iframe.contentDocument.title;
+            APP.setNav({title:that.title});
+          }
+        }
+      },
+      on:function(json){
+        if (Array.isArray(json)) {
+          for(var num in json){
+              this.on(json[num]);
+          }
+          return;
+        };
+        if (json.ui) {
+          while (this.heroContent.lastChild) {
+             this.heroContent.removeChild(this.heroContent.lastChild);
+          }
+          var views = json.ui.views;
+          for(var num in views){
+            var viewObject = views[num];
+            var view = document.createElement(APP.camelCase2bar(viewObject.class||viewObject.res));
+            if(view.setJson){
+              this.heroContent.appendChild(view);
+              view.controller = this;
+              if (viewObject.frame) {
+                // viewObject.frame.p = {w:window.innerWidth,h:window.innerHeight};
+              };
+              view.json = (viewObject);
+            }else{
+              console.log(viewObject.class||viewObject.res);
+            }
+          }
+        }; 
+        if (json.appearance) {
+            APP.setNav({nav:json.appearance});
+        }else if (json.ui_fragment) {
+            for(var num in json.ui_fragment){
+                var view = json.ui_fragment[num];
+                var parentElement;
+                if (view.parent) {
+                    parentElement = this.findViewByname(view.parent,this.heroContent);
+                }else{
+                  parentElement = this.heroContent;
+                }
+                var element = document.createElement(APP.camelCase2bar(view.class||view.res));
+                parentElement.appendChild(element);
+                element.controller = this;
+                element.json = (view);
+                parentElement.appendChild(element);
+            }
+        }else if(json.datas){
+          var datas = json.datas;
+          if (Array.isArray(datas)) {
+            for(var num in datas){
+                var data = datas[num];
+                var element = this.findViewByname(data.name,this.heroContent);
+                if (element) {
+                    element.oon(data);
+                };
+            }
+          }else{
+            if (datas.frame) {
+              datas.frame.p = {w:window.innerWidth,h:window.innerHeight};
+            };
+            var element = this.findViewByname(datas.name,this.heroContent);
+            if (element) {
+                element.oon(datas);
+            };
+          };
+        }else if(json.command){
+          var command = json.command;
+          if (typeof(command) === 'string') {
+              if (command === 'refresh') {
+                window.location.reload();
+              }
+              else if(command==='showLoading'){
+                var loading=this.findViewByname('loading',this.heroContent);
+                if(!loading){
+                  var loading = document.createElement('hero-loading');
+                  loading.controller = this;
+                  this.heroContent.appendChild(loading);
+                }
+                loading.oon({show:true,name:'loading'});
+              }
+              else if(command==='stopLoading'){
+                var loading=this.findViewByname('loading',this.heroContent);
+                if (loading) {
+                  loading.oon({show:false});
+                };
+              }
+              else if(command.substring(0,5) === 'goto:'){
+                var url = command.replace('goto:','');
+                if(url.substring(0,3) == 'tel'){
+                  this.on({command:{show:{title:'拨打电话'+url}}});
+                }else{
+                  APP.gotoPage(url);
+                }
+              }else if(command.substring(0,5) === 'load:'){
+                APP.gotoPage(command.substring(5,command.length));
+              }else if(command.substring(0,4) === 'back'){
+                  window.history.back()
+              }else if(command.substring(0,8) === 'rootBack'){
+                  window.history.back()
+              }else if(command.substring(0,8) === 'present:'){
+                APP.gotoPage(command.substring(8,command.length),'present');
+              }else if(command.substring(0,7) === 'dismiss'){
+                  window.history.back()
+              }else if(command.substring(0,6) === 'submit'){
+                  //todo
+              }
+            }else if (command.show) {
+              if (command.show.action || command.show.cancelAction) {
+                  // confirm(command.show.content) && API.out(command.show.action);
+                  var confirm = document.createElement('hero-confirm');
+                  confirm.controller = this;
+                  confirm.oon({'text': command.show.content || '',action:command.show.action,cancelAction:command.show.cancelAction});
+                  this.heroContent.appendChild(confirm);
+                }else if(command.show.title||command.show.content){
+                  var alert = document.createElement('hero-alert');
+                  alert.controller = this;
+                  alert.oon({'text': command.show.title || ''});
+                  this.heroContent.appendChild(alert);
+                }else if(command.show.class){
+                  var dialog = document.createElement('hero-dialog');
+                  dialog.controller = this;
+                  dialog.json = {'str': JSON.stringify(command.show)};
+                  this.heroContent.appendChild(dialog);
+                }
+              }else if(command.delay) {
+                  var delayObj = command.delay;
+                  var delayTime = command.delayTime;
+                  var that = this;
+                  setTimeout(function() {
+                    that.on(delayObj);
+                  }, delayTime);
+              }else if (command.viewWillAppear) {
+                  this.appearObject = command.viewWillAppear;
+                  // if (Array.isArray(command.viewWillAppear)) {
+                  //     this.controller.in(command.viewWillAppear[0]);
+                  // }else{
+                  //     this.controller.in(command.viewWillAppear);
+                  // };
+              }else if (command.viewWillDisappear) {
+
+              };
+        }else{
+          if(json.hasOwnProperty('name') && json.hasOwnProperty('value')){
+              ui2Data['_'+json.name] = json.value;
+          }
+          this.controller.in(json);
+        }
+      }
+    };
+</script>
+

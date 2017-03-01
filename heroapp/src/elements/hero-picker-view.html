@@ -1,0 +1,265 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<dom-module id="hero-picker-view">
+  <link rel="stylesheet" type="text/css" href="pickerviewbase/anypicker-font.css">
+  <link rel="stylesheet" type="text/css" href="pickerviewbase/anypicker.css">
+  <link rel="stylesheet" type="text/css" href="pickerviewbase/anypicker-ios.css">
+  <style type="text/css">
+    #heroContent {
+      visibility: hidden;
+    }
+  </style>
+  <template>
+    <div id='heroContent'>
+      <paper-input type="text" id='picker' value='{{value}}'></paper-input>
+    </div>
+  </template>
+</dom-module>
+
+<script src='pickerviewbase/jquery-1.11.1.min.js'></script>
+<script src='pickerviewbase/anypicker.js'></script>
+<script>
+  function isUndefined(val){
+    return val===undefined || val==='undefined';
+  }
+  
+  Polymer({
+    is: "hero-picker-view",
+      behaviors: [HeroBehavior],
+      properties: {
+        selectAction:{
+          type: Object
+        },
+        value:{
+          type:String,
+          observer:'valueChange'
+        }
+      }, 
+      getPosition:function(value){
+        if(value && this.arr.one===true){
+          return {section:0,row:this.arr.indexOf(value)};
+        }
+        else{
+          var arr=value.split(/\s+/),
+            data1=arr[0],
+            data2=arr[1],
+            section,
+            row;
+            
+            if(!isUndefined(data1)){
+              for(var i=0,j=this.arr.length;i<j;i++){
+                if(this.arr[i].title===data1){
+                  section=i;
+                  break;
+                }
+              }
+            }
+            else{
+              section=0;
+            }
+            
+            if(!isUndefined(data2)){
+              var tmpArr=this.arr[section];
+              for(var m=0,n=tmpArr.rows.length;m<n;m++){
+                if(tmpArr.rows[m]===data2){
+                  row=m;
+                  break;
+                }
+              }
+            }
+            else{
+              row=0;
+            }
+            return {section:section,row:row};
+        }
+      },
+      valueChange:function(value){
+        if(value){
+           if(this.arr){
+             this.selectAction.value = this.getPosition(value);
+           }
+           else{
+             this.selectAction.value=value;
+           }
+           API.out(this.selectAction);
+        }
+      },
+      on: function(json) {
+        var soViewSections = {
+            header: [],
+            contentTop: [],
+            contentBottom: [],
+            footer: ["cancelButton", "setButton"]
+        };
+        var $this=$(this.$.picker);
+        var ul = navigator.language.toLowerCase();
+        if (ul === 'zh-cn')
+          var io18n = {
+            setButton: "设置",
+            cancelButton: "取消",
+            shortMonths: '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
+            fullMonths: '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_')
+          };
+        
+        if(json.selectAction){
+          this.selectAction=json.selectAction;
+        }
+        if(json.method==='show'){
+          // show the picker
+          $this.triggerHandler('focus');
+        }
+        if(json.type==='date'){
+           $this.AnyPicker({
+              mode: "datetime",
+              dateTimeFormat: "MMMM d, yyyy",
+              theme: "iOS",
+              layout: "fixed",
+              viewSections: soViewSections,
+              i18n:io18n
+           });
+        }
+        if (json.datas) {
+          var arr=this.arr=json.datas;
+          if(Array.isArray(arr) && arr.length>0){
+           
+            if(typeof arr[0]==='string'){
+              this.arr.one=true;
+              // one dimension
+              var dataSource=[],
+              oArrComponents = [
+                {
+                  component: 0,
+                  name: '0',
+                  label: '0'
+                }
+              ],
+              oArrDataSource = [
+                {
+                  component: 0,
+                  data: dataSource
+                }
+              ];
+              
+              for(var i=0,j=arr.length;i<j;i++){
+                  dataSource.push({
+                    label:arr[i],
+                    val:i
+                  });
+                }
+               
+              $this.AnyPicker({
+                  mode: "select",
+                  layout: "fixed",
+                  viewSections: soViewSections,
+                  components: oArrComponents,
+                  dataSource: oArrDataSource,
+                  theme: "iOS",
+                  // onSetOutput:this.valueChange,
+                  i18n:io18n
+              });
+            }
+            else if(typeof arr[0]==='object'){
+              // two dimension
+              var arr0=[];
+              for(var i=0,j=arr.length;i<j;i++){
+                  arr0.push({
+                    label:arr[i].title,
+                    val:i
+                  });
+                }
+              
+              function getData2(data1){
+                var arr1=[];
+                var tmpArr=arr[data1.val].rows;
+                 for(var i=0,j=tmpArr.length;i<j;i++){
+                  arr1.push({
+                    label:tmpArr[i],
+                    val:i
+                  });
+                }
+                return arr1;
+              }
+              
+              function onChange(iComp, iRow, oSelectedValues, sSource){
+                if(iComp === 0){
+                    var data1 = oSelectedValues.values[0];
+                    this.setting.dataSource[1].data = getData2(data1);
+                    this.reloadComponent(1, true);
+                  }
+              }
+              
+              var oArrComponents=[
+                {
+                component: 0,
+                    name: "0",
+                    label: "0",
+                    width: "50%",
+                    textAlign: "center"
+                },
+                {
+                  component: 1,
+                      name: "1",
+                      label: "1",
+                      width: "50%",
+                      textAlign: "center"
+                }
+                ],
+                oArrDataSource=[
+                  {
+                      component: 0,
+                      data: arr0
+                    },
+                    {
+                      component: 1,
+                      data: getData2(arr0[0])
+                    }
+                ];
+                $this.AnyPicker({
+                  mode: "select",
+                  layout: "fixed",
+                  viewSections: soViewSections,
+                  components: oArrComponents,
+                  dataSource: oArrDataSource,
+                  onChange:onChange,
+                  // onSetOutput:this.valueChange,
+                  theme: "iOS",
+                  i18n:io18n
+                });
+            }
+          }
+        }
+      },
+      ready: function(){
+
+      }
+    });
+
+</script>

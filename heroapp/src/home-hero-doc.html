@@ -1,0 +1,1137 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+
+<dom-module id="home-hero-doc">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+        position: absolute;
+        margin: 0px;
+        padding: 0px;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
+      #code{
+        text-align: left;
+        overflow: hidden;
+        display: block;
+        position: absolute;
+        top:60px;
+        bottom:0px;
+        width: 100%;
+        font-size: 18px;
+        color: #000;
+        background-color: #333;
+      }
+      app-header {
+        position: fixed;
+        height: 60px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        color: #fff;
+        background-color: #3f51b5;
+        --app-header-background-front-layer: {
+          background-image: url(//app-layout-assets.appspot.com/assets/PharrellWilliams.jpg);
+        };
+      }
+      #viewer {
+        position: absolute;
+        left: 240px;
+        right: 0px;
+        height: 100%;
+        margin: 0px;
+        padding: 10px;
+        overflow-y: auto;
+        background-color: #fff;
+        border-left: 1px solid #ccc;
+      }
+
+    </style>
+    <app-header effects="waterfall resize-title blend-background parallax-background" condenses reveals>
+      <app-toolbar id='title'>
+        <paper-icon-button icon="arrow-back" on-tap='back'></paper-icon-button>
+        <div condensed-title>Document</div>
+        <paper-icon-button icon="menu" on-tap='menu'></paper-icon-button>
+      </app-toolbar>
+    </app-header>
+
+    <paper-material id = 'code'>
+    <hero-table-view id='menu' json="{frame:{w:'240',y:'0',b:'64'},backgroundColor:'eeeeee'}"></hero-table-view>
+    <iron-doc-viewer id='viewer'></iron-doc-viewer>
+
+    </paper-material>
+
+
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'home-hero-doc',
+      behaviors: [HeroBehavior,HeroViewController,Polymer.NeonSharedElementAnimatableBehavior],
+      properties: {
+        sharedElements: {
+          value: function() {
+            return {
+              'hero1': this.$.code
+            }
+          }
+        },
+        animationConfig: {
+          value: function() {
+            return {
+              'entry': [{
+                name: 'hero-animation',
+                id: 'hero1',
+                toPage: this
+              }, {
+                name: 'cascaded-animation',
+                animation: 'fade-in-animation',
+                nodes: [this.$.back]
+              }],
+
+              'exit': [ {
+                name: 'cascaded-animation',
+                animation: 'fade-out-animation',
+                nodes: [this.$.back]
+              },{
+                name: 'cascaded-animation',
+                animation: 'transform-animation',
+                transformTo: 'translateY(-100vh)',
+                nodes: [this.$.code]
+              }]
+            };
+          }
+        }
+
+
+      },
+      on:function(json){
+        var that = this;
+        if (json.data) {
+          this.$.menu.controller = this;
+          this.$.menu.on(json)
+        };
+        if (json.descriptor) {
+          this.$.viewer.descriptor = json.descriptor;
+        };
+      },
+      ready:function(){
+        var that = this;
+        this.on({data:[{
+          sectionTitle:'HeroElement',
+          rows:[
+            {
+              title:'HeroViewController',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "ui",
+                    "type": "object",
+                    "desc": "`ui` is a necessary element in a page which defines the ui attributes and initial elements in the page.\n\nversion: it defines the version of the page, -1 is the initial value. If the ui contents is changed please increase the version so that the framework can flush the cache. Especially, value 0 is reserved for a page doesn't want to be cached.\n\nbackgroundColor: the page background color in R-G-B or R-G-B-A.\n\ntintColor: the navigation bar background color.\n\nnav: the object contains the navigation bar contents:\n\n--title: the page title in string.\n\n--leftItems: the left menu on the navigation bar\n\n--rightItems:the right menu on the navigation bar\n\nviews: array, the UI elements on the page are defined here."
+                  },
+                  {
+                    "name": "ui_fragment",
+                    "type": "array",
+                    "desc": "`ui_fragment` is an array of UI elements to be sent to the controller whose format is the same as `views` in `ui`. `ui_fragment` is used for adding elements after the page has been initialized."
+                  },
+                  {
+                    "name": "datas",
+                    "type": "array",
+                    "desc": "`datas` is an array of objects used to send events to specfic elements."
+                  },
+                  {
+                    "name": "appearance",
+                    "type": "object",
+                    "desc": "`appearance` is an object of navigation bar content to be sent to the controller whose format is the same as `nav` in `ui`. `appearance` is used to update the navigation bar after the page has been initialized.\n\n title: the new title in string.\n\n leftItems: the new left menu on the navigation bar, it could be empty.\n\n rightItems:the new right menu on the navigation bar, it could be empty. \n\nnavigationBarHidden: to hide the navigation bar."
+                  },
+                  {
+                    "name": "command",
+                    "type": "object",
+                    "desc": "`command` is an object for broadcasting events to the controller.\n\nrefresh: reload the page and refresh all ui elements.\n\ngoto: push another view controller. \n\npresent: present another view controller. \n\nload: load a new web page with current view controller. \n\nshowLoading: show the loading animation.\n\nback: close current view controller.\n\ndismiss: close current view controller and its root view controller.\n\nrootBack: jump to the home page.\n\nshow: show a prompt dialog. \n\n--title：the dialog title.\n\n--content: the dialog messages.\n\n--class: show a customized dialog with the `class` object which is composed with hero elements.\n\nviewWillAppear: the object in `viewWillAppear` will send to web container after the controller is shown. \n\nviewWillDisappear: the object in `viewWillDisappear` will send to web container after the controller is hidden."
+                  },
+                  {
+                    "name": "globle",
+                    "type": "object",
+                    "desc": "`globle` is an object for broadcasting events to the whole app.\n\nkey: tabSelect -- the action to switch the tab of home page. newApp -- the action to launch a new Hero app.\n\nvalue: the action value."
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroViewController` is the view controller of Hero-mobile in iOS which in charge of elements management and events dispatching. In android it is implemented with `HeroFragment`. Every HeroViewController(HeroFragment) is corresponding to a hero web page. You can define UI elements and actions in the hero web page and launch it with Hero-mobile frameworks."
+              }
+            },
+            {
+              title:'HeroView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "name",
+                    "type": "string",
+                    "desc": "Name of the element. If this view accepts data after inited, you should give it a name string for the controller to find it.",
+                  },
+                  {
+                    "name": "parent",
+                    "type": "string",
+                    "desc": "The name of its parent. It's not necessary if you don't want to specify a parent for the element.",
+                  },
+                  {
+                    "name": "frame",
+                    "type": "Object",
+                    "desc": "x: the start coordinate in X-axis. \n\n y: the start coordinate in Y-axis.\n\nw: the width of element.\n\nh: the height of element.\n\nl: the same as 'x'.\n\nt: the same as 'y'.\n\nr: the distance to the right edge of its parent. You can specify this attribute instead of 'w'.\n\nb: the distance to the bottom edge of its parent. You can specify this attribute instead of 'h'.\n\nIf the difinition of an attribute above ends with 'x', it means a multiple of its parent, e.g. '0.5x' means half of it parent; otherwise it means the dimension of screen",
+                  },
+                  {
+                    "name": "center",
+                    "type": "Object",
+                    "desc": "x: the center coordinate in X-axis. \n\n y: the center coordinate in Y-axis.\n\nUsually the x, y attribute of 'frame' will be ignored when 'center' is defined.",
+                  },
+                  {
+                    "name": "alpha",
+                    "type": "float",
+                    "desc": "The transparency of element, its range is from 0 to 1.",
+                  },
+                  {
+                    "name": "enable",
+                    "type": "boolean",
+                    "desc": "Whether the element is enabled.",
+                  },
+                  {
+                    "name": "hidden",
+                    "type": "boolean",
+                    "desc": "If it's true, the element will be hidden.",
+                  },
+                  {
+                    "name": "backgroundColor",
+                    "type": "string",
+                    "desc": "the background color of the element in R-G-B or R-G-B-A.",
+                  },
+                  {
+                    "name": "cornerRadius",
+                    "type": "float",
+                    "desc": "the corner radius of the element in dimension if round corners are needed.",
+                  },
+                  {
+                    "name": "borderWidth",
+                    "type": "float",
+                    "desc": "the border width of the element in dimension if border is needed.",
+                  },
+                  {
+                    "name": "borderColor",
+                    "type": "string",
+                    "desc": "the border color of the element in R-G-B if border is needed.",
+                  },
+                  {
+                    "name": "subViews",
+                    "type": "array",
+                    "desc": "the array of the child views of the element. This property is only used in UIView in general.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroView` is a parent class of all elements. Its all properties will be inherited by other Hero elements."
+              }
+            },
+            {
+              title:'UIView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`UIView` is a basic element. Usually it's used as a container for sub-views.\n\n ## Sample\n\n    {class:'UIView',\n     frame:{x:'-1',r:'-1',h:'50'},\n     borderColor:'cccccc',\n     backgroundColor:'ffffff'}"
+              }
+            },
+            {
+              title:'HeroLabel',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "text",
+                    "type": "string",
+                    "desc": "the text of the label",
+                  },
+                  {
+                    "name": "font",
+                    "type": "string",
+                    "desc": "bold: use bold font for the label",
+                  },
+                  {
+                    "name": "textColor",
+                    "type": "String",
+                    "desc": "the text color of the label in R-G-B or R-G-B-A.",
+                  },
+                  {
+                    "name": "size",
+                    "type": "integer",
+                    "desc": "the font size of the label",
+                  },
+                  {
+                    "name": "aligment",
+                    "type": "String",
+                    "desc": "center: the text is centered in horizontal direction.\n\n left: the text is left-aligned in horizontal direction.\n\n right: the text is right-aligned in horizontal direction.\n\n",
+                  },
+                  {
+                    "name": "numberOfLines",
+                    "type": "integer",
+                    "desc": "the maximum lines count of the label. If it's set to 0, means the lines count is limitless.",
+                  },
+                  {
+                    "name": "hAuto",
+                    "type": "boolean",
+                    "desc": "If the height of the label is not sure, please set this attribute to true so that it can allocate the height itself.",
+                  },
+                  {
+                    "name": "attribute",
+                    "type": "object",
+                    "desc": "This property is used for a rich text label with different color and size.\n\n'color(i1,i2)' : the color of characters from i1 to i2 can be specified individually, such as 'color(0,12)':'ffffff'.\n\n'size(i3,i4)': the font size of characters from i3 to i4 can be specified individually, such as 'size(10,20)':16, \n\n 'gap'': an extra gap between lines",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroLabel` is a element like label. It's read-only and can be single-line or multi-line.\n\n ## Sample\n\n    {class:'HeroLabel', \n     frame:{x:'20',y:'0',w:'120',h:'60'},\n     textColor:'000000',\n     text:'申请金额 (元)'}"
+              }
+            },
+            {
+              title:'HeroButton',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "title",
+                    "type": "string",
+                    "desc": "the text on the button",
+                  },
+                  {
+                    "name": "titleColor",
+                    "type": "String",
+                    "desc": "the title text color of the button in R-G-B or R-G-B-A.",
+                  },
+                  {
+                    "name": "titleColorH",
+                    "type": "String",
+                    "desc": "the highlighted title color of the button.",
+                  },
+                  {
+                    "name": "titleDisabledColor",
+                    "type": "String",
+                    "desc": "the disabled title text color of the button.",
+                  },
+                  {
+                    "name": "backgroundDisabledColor",
+                    "type": "String",
+                    "desc": "the disabled background color of the button.",
+                  },
+                  {
+                    "name": "size",
+                    "type": "integer",
+                    "desc": "the title font size of the button",
+                  },
+                  {
+                    "name": "imageN",
+                    "type": "string",
+                    "desc": "the background image of the button",
+                  },
+                  {
+                    "name": "click",
+                    "type": "object",
+                    "desc": "The action of the button. This object will be reported to controller after the button is clicked.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroButton` is a button control. Usually it contains a 'click' object for clicking.\n\n ## Sample\n\n    {class:'HeroButton',\n    name:'registerBtn',\n    frame:{r:'15',w:'120',y:'0',h:'15'},\n    click:{click：‘register’} }"
+              }
+            },
+            {
+              title:'HeroSwitch',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "value",
+                    "type": "boolean",
+                    "desc": "The initial on/off state of the switch.",
+                  },
+                  {
+                    "name": "click",
+                    "type": "object",
+                    "desc": "The action of the switch. If the state of switch is changed, the value will be put to the object.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroSwitch` is a component for on/off switching.\n\n## Sample\n\n    {class:'HeroSwitch',\n    frame:{r:'20',y:'250',w:'40',h:'30'},\n    name:'switch',\n    value:false,\n    click:{openLocation:'0'}}"
+              }
+            },
+            {
+              title:'HeroTextField',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "text",
+                    "type": "string",
+                    "desc": "The content of the text field.",
+                  },
+                  {
+                    "name": "placeHolder",
+                    "type": "string",
+                    "desc": "The hint content of the text field.",
+                  },
+                  {
+                    "name": "textColor",
+                    "type": "String",
+                    "desc": "the text color of the text field in R-G-B or R-G-B-A.",
+                  },
+                  {
+                    "name": "placeHolderColor",
+                    "type": "String",
+                    "desc": "the hint text color of the text field.",
+                  },
+                  {
+                    "name": "size",
+                    "type": "integer",
+                    "desc": "the font size of the text field",
+                  },
+                  {
+                    "name": "secure",
+                    "type": "boolean",
+                    "desc": "The secure state of text field. It's used for a password field.",
+                  },
+                  {
+                    "name": "clear",
+                    "type": "object",
+                    "desc": "A method to clear the content of a text field.",
+                  },
+                  {
+                    "name": "type",
+                    "type": "string",
+                    "desc": "number:  the text field is only for numbers. \n\n phone: the text field is using for phone number input. \n\n pin: the text field is using for pin input \n\n If the type is not specified, the text field is for all input. ",
+                  },
+                  {
+                    "name": "maxLength",
+                    "type": "integer",
+                    "desc": "The max length of the text field.",
+                  },
+                  {
+                    "name": "textFieldDidBeginEditing",
+                    "type": "object",
+                    "desc": "The action on an edit start. If this object is defined, the text field will put text content to it and reports it to controller at the beginning of edit.",
+                  },
+                  {
+                    "name": "textFieldDidEditing",
+                    "type": "object",
+                    "desc": "The action on editing. If this object is specified, the text field will put text content to it and report it to controller on the every change of content.",
+                  },
+                  {
+                    "name": "textFieldDidEndEditing",
+                    "type": "object",
+                    "desc": "The action on an edit end. If this object is specified, the text field will put text content to it and report it to controller at the end of edit.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroTextField` is a single-line text editor.\n\n## Sample\n\n    {class:'HeroTextField',\n    name:'phoneField',\n    frame:{x:'15',r:'15',y:'0',h:'50'},\n    placeHolder:'手机号码',\n    type:'phone',\n    textFieldDidEditing:{textfield:'phoneField'},}"
+              }
+            },
+             {
+              title:'HeroTextView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "text",
+                    "type": "string",
+                    "desc": "The content of the text view.",
+                  },
+                  {
+                    "name": "appendText",
+                    "type": "string",
+                    "desc": "The content of 'appendText' will be append to the text view.",
+                  },
+                  {
+                    "name": "placeHolder",
+                    "type": "string",
+                    "desc": "The hint content of the text view.",
+                  },
+                  {
+                    "name": "textColor",
+                    "type": "String",
+                    "desc": "the text color of the text view in R-G-B or R-G-B-A.",
+                  },
+                  {
+                    "name": "size",
+                    "type": "integer",
+                    "desc": "the font size of the text field",
+                  },
+                  {
+                    "name": "editable",
+                    "type": "boolean",
+                    "desc": "It specifies whether the text view is editable.",
+                  },
+                  {
+                    "name": "textFieldDidBeginEditing",
+                    "type": "object",
+                    "desc": "The action on an edit start. If this object is defined, the text field will put text content to it and reports it to controller at the beginning of edit.",
+                  },
+                  {
+                    "name": "textFieldDidEditing",
+                    "type": "object",
+                    "desc": "The action on editing. If this object is specified, the text field will put text content to it and report it to controller on the every change of content.",
+                  },
+                  {
+                    "name": "textFieldDidEndEditing",
+                    "type": "object",
+                    "desc": "The action on an edit end. If this object is specified, the text field will put text content to it and report it to controller at the end of edit.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroTextView` is a multi-line text editor. Its properties are basically same as HeroTextField.\n\n## Sample\n\n    {class:'HeroTextView',\n    frame:{x:'20',y:'1',r:'20',h:'180'},\n    placeHolder:'欢迎您提出宝贵的意见和建议，帮助我们做的更好',\n    name:'feedback',\n    size:16,\n    textFieldDidEditing:{textfield:'feedback'},}"
+              }
+            },
+            {
+              title:'HeroImageView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "image",
+                    "type": "string",
+                    "desc": "The picture to be shown. If it's a local resource, just set the picture name here, or set a http url for a picture on internet.",
+                  },
+                  {
+                    "name": "base64image",
+                    "type": "string",
+                    "desc": "You can put the content of a base64 encoded picture for display.",
+                  },
+                  
+                  {
+                    "name": "showBig",
+                    "type": "boolean",
+                    "desc": "If 'showBig' property is true, the user can zoom in the picture by tapping on it.",
+                  },
+                  {
+                    "name": "localImage",
+                    "type": "string",
+                    "desc": "This property is used for picture picking and uploading. User can pick a picture from the gallery or take a photo from the camera. And the picture will be named as the 'localImage' string in local storage.",
+                  },
+                  {
+                    "name": "uploadUrl",
+                    "type": "string",
+                    "desc": "It depends on 'localImage'. The picture will be uploaded to the 'uploadUrl' after it's picked.",
+                  },
+                  {
+                    "name": "uploadName",
+                    "type": "string",
+                    "desc": "It depends on 'localImage' and 'uploadUrl'. The 'uploadName' string will be used as the uploading file name.",
+                  },
+                  {
+                    "name": "localImageReady",
+                    "type": "object",
+                    "desc": "It depends on 'localImage'. This object will be reported to controller after the local image finishes picking and uploading.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroImageView` is a view for image display. It supports a local resource or a picture on internet. You can also pick a picture from the gallery or take a photo from the camera then show it on the image view. \n\n## Sample\n\n    {class:'HeroImageView',\n    frame:{w:'60',h:'60'},\n    center:{x:'0.125x',y:'190'},\n    localImage:'image1',\n    hidden:false,\n    name:'feedback1',\n    localImageReady:{imageReady:'feedback1'},}"
+              }
+            },
+            {
+              title:'HeroScrollView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "contentSize",
+                    "type": "object",
+                    "desc": "x: content size in X-axis\n\n y: content size in Y-axis\n\n Valid in iOS.",
+                  },
+                  {
+                    "name": "contentOffset",
+                    "type": "object",
+                    "desc": "x: content offset in X-axis\n\n y: content offset in Y-axis",
+                  },
+                  {
+                    "name": "pullRefresh",
+                    "type": "object",
+                    "desc": "action: The action object when scroll view is pulled down.\n\nidle: the idle state string\n\npulling: the pulled state string\n\nrefreshing: the refreshing state string",
+                  },
+                  {
+                    "name": "method",
+                    "type": "string",
+                    "desc": "stop: Stop the pulled down state.\n\n",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroScrollView` is a vertical scroll view can contain child views.\n\n## Sample\n\n    {class:'HeroScrollView',\n    frame:{w:'1x',y:'0',b:'74'},\n    name:'scroll',\n    backgroundColor:'f0eff5',\n    subViews:[\n      {\n      class:'UIView',\n      frame:{w:'1x',h:'1x'},\n      backgroundColor:'f0eff5',\n      }\n    ]},"
+              }
+            },
+            {
+              title:'HeroTableView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "header",
+                    "type": "object",
+                    "desc": "The header content of the table. It may be a single view or a view group.",
+                  },
+                  {
+                    "name": "footer",
+                    "type": "object",
+                    "desc": "The footer content of the table. It may be a single view or a view group. ",
+                  },
+                  {
+                    "name": "data",
+                    "type": "array",
+                    "desc": "The table contents array. It may contain following elements:\n\nsectionTitle: it's a section title.\n\nsectionFootTitle: it's a section footer title.\n\nrows: it's an array of objects, each one is a row in a section and will be implemented in HeroTableViewCell.\n\nsectionView: it's a section view.",
+                  },
+                  {
+                    "name": "dataIndex",
+                    "type": "array",
+                    "desc": "The section index for quick navigation.",
+                  },
+                  {
+                    "name": "separatorColor",
+                    "type": "string",
+                    "desc": "The color of separator between lines.",
+                  },
+                  {
+                    "name": "pullRefresh",
+                    "type": "object",
+                    "desc": "action: The action object when scroll view is pulled down.\n\nidle: the idle state string\n\npulling: the pulled state string\n\nrefreshing: the refreshing state string",
+                  },
+                  {
+                    "name": "drawMore",
+                    "type": "object",
+                    "desc": "action: The action object when scroll view is pulled up.",
+                  },
+                  {
+                    "name": "method",
+                    "type": "string",
+                    "desc": "closeRefresh: Stop the pulled down state.\n\ncloseLoadMore: Stop the pulled up state.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroTableView` is a table view can contain many rows. Every row can be a single view or a view group.  \n\n## Sample\n\n    {class:'HeroTableView',\n    frame:{w:'1x',h:'1x'},\n    name:'list',\n    data:[{\n      sectionTitle:'标题',\n      rows:[\n      {title:'dev'},\n      {title:'demo'},\n      {title:'prod'},\n      ]\n    }]},"
+              }
+            },
+            {
+              title:'HeroTableViewCell',
+              descriptor:{
+                "properties": [
+                {
+                    "name": "class",
+                    "type": "object",
+                    "desc": "the row element class and its atributes",
+                  },
+                  {
+                    "name": "res",
+                    "type": "object",
+                    "desc": "the row element resource which is defined in native source.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroTableViewCell` is an implementation of a row in HeroTableView."
+              }
+            },
+            {
+              title:'HeroCheckBox',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "checked",
+                    "type": "boolean",
+                    "desc": "The initial checked state of the check box.",
+                  },
+                  {
+                    "name": "click",
+                    "type": "object",
+                    "desc": "The action of the check box. If the state is changed, the value will be put to the object.",
+                  },
+                  {
+                    "name": "selectedImage",
+                    "type": "string",
+                    "desc": "The image of checked state. It can be a local resource or an internet image.",
+                  },
+                  {
+                    "name": "unselectedImage",
+                    "type": "string",
+                    "desc": "The image of unchecked state. It can be a local resource or an internet image.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroCheckBox` is a component with checked/unchecked states.\n\n## Sample\n\n    {class: 'HeroCheckBox',\n    frame: {x: '10',y: '10',w: '30',h: '30'},\n    checked: true,\n    selectedImage: 'Agree',\n    unselectedImage: 'Disagree',\n    click: {checkbox: 'checked'},"
+              }
+            },
+            {
+              title:'HeroPickerView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "type",
+                    "type": "string",
+                    "desc": "date: it's a date picker if the type is specified to 'date'.",
+                  },
+                  {
+                    "name": "selectIndex",
+                    "type": "integer",
+                    "desc": "The selected item of options.",
+                  },
+                  {
+                    "name": "datas",
+                    "type": "array",
+                    "desc": "The options data of selection.",
+                  },
+                  {
+                    "name": "selectAction",
+                    "type": "object",
+                    "desc": "The action of the picker view. If an option is selected, the value will be put to the object.",
+                  },
+                  {
+                    "name": "method",
+                    "type": "string",
+                    "desc": "show: The pick will be shown.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroPickerView` is a component for picking an option from rows of options.\n\n## Sample\n\n    {class:'HeroPickerView',\n    datas:usages,\n    name:'usagePicker',\n    selectAction:{selected:'usage'},"
+              }
+            },
+            {
+              title:'HeroToast',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "icon",
+                    "type": "string",
+                    "desc": "The image of the indication. It can be a local resource or an internet image.",
+                  },
+                  {
+                    "name": "text",
+                    "type": "string",
+                    "desc": "The content string of the indication.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroToast` is an indication like a toast.\n\n## Sample\n\n    {class:'HeroToast',\n    name : 'toast',\n    text:'无法获取位置'},"
+              }
+            },
+            {
+              title:'HeroScanBarCodeView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "getBarCode",
+                    "type": "object",
+                    "desc": "The action of the HeroScanBarCodeView. The scan result will be put to the object.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroScanBarCodeView` is a component to scan a bar code.\n\n## Sample\n\n    {class:'HeroScanBarCodeView',\n    frame:{'w':'1x',h:'1x'},\n    getBarCode:{getBarCode:'code'}"
+              }
+            },
+            {
+              title:'HeroDevice',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "getInfo",
+                    "type": "object",
+                    "desc": "The object for the demanded contents.\n\nappInfo: The app version on device.\n\nsysInfo: The system version of device.\n\ndeviceInfo: The device name.\n\nchannel: The publishing channel infomation.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroDevice` is an invisible component used to get device information such as the version, the device name.\n\n## Sample\n\n    {class:'HeroDevice',\n    name : 'device',\n    hidden: true,\n    getInfo:{'sysInfo':{},'appInfo':{},'deviceInfo':{}},"
+              }
+            },
+            {
+              title:'HeroLocationView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "fetch_coordinate",
+                    "type": "object",
+                    "desc": "The object for the location result. The location value will be put into the object named 'la'(latitude) and 'lo'(longitude).",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroLocationView` is an invisible component used to request a location information.\n\n## Sample\n\n    {class:'HeroLocationView',\n    name:'location',\n    fetch_coordinate:{location:'fetch'}},"
+              }
+            },
+            {
+              title:'HeroTouchID',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "checkEnable",
+                    "type": "object",
+                    "desc": "To check if the device supports touch ID. A boolean value will be put into the object.",
+                  },
+                  {
+                    "name": "check",
+                    "type": "object",
+                    "desc": "title: The indication to user.\n\n action: The action of HeroTouchID, the value will be put to the object if touch ID is detected.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroTouchID` is a component to get the touch ID of device especially for iOS.\n\n## Sample\n\n    {class:'HeroTouchID',\n    frame:{x:'0',y:'0',w:'0',h:'0'},\n    checkEnable:{checktouch:'checktouch'},\n    check:{action:{check:'touchID'}}"
+              }
+            },
+            {
+              title:'HeroLockPatternView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "track",
+                    "type": "boolean",
+                    "desc": "This attribute defines whether the gesture path and tracks will be shown, true for showing.",
+                  },
+                  {
+                    "name": "bigTrack",
+                    "type": "boolean",
+                    "desc": "This attribute defines the tracks are shown with big circles or small circles. Big circles will fill the track container.",
+                  },
+                  {
+                    "name": "color",
+                    "type": "string",
+                    "desc": "The color of the track circles.",
+                  },
+                  {
+                    "name": "values",
+                    "type": "array",
+                    "desc": "Set values to the pattern view. The format is like [1, 4, 7]",
+                  },
+                  {
+                    "name": "action",
+                    "type": "object",
+                    "desc": "The values array of the pattern. If the pattern is changed, the values will be put to the object such as [0, 3, 6], and the gesture is finished or not will be reported too. ",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`HeroLockPatternView` is a component for lock patterns.\n\n## Sample\n\n    {class:'HeroLockPatternView',\n    frame:{w:'290',h:'290'},\n    center:{x:'0.5x',y:'0.5x'},\n    bigTrack:false,\n    track:true,\n    action:{gesture:'gesture'}}"
+              }
+            },
+          ]
+        },{
+          sectionTitle:'DRElement',
+          rows:[
+            {
+              title:'DRButton',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "DRStyle",
+                    "type": "string",
+                    "desc": "The style of the button. Several styles including background, text color, text size, corner radius are pre-defined in DRButton. \n\n value: B1, B2, B3, B4, B5, B7",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`DRButton` is a button component inherited HeroButton. You can quote the pre-defined styles by using 'DRStyle' property.\n\n## Sample\n\n    {class:'DRButton',\n    DRStyle:'B7',\n    name:'registerBtn',\n    frame:{r:'15',w:'120',y:'0',h:'15'},\n    click:{click：‘register’} }"
+              }
+            },
+            {
+              title:'DRTextField',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "theme",
+                    "type": "string",
+                    "desc": "black: the text field has a black theme.\n\nwhite: the text field has a white theme.",
+                  },
+                  {
+                    "name": "hideBottomLine",
+                    "type": "boolean",
+                    "desc": "To decide the bottom line of text field will be hidden or not.",
+                  },
+                  {
+                    "name": "drLocked",
+                    "type": "boolean",
+                    "desc": "If this property is true, the text field should be read-only and has a lock icon on the right.",
+                  },
+                  {
+                    "name": "drSecure",
+                    "type": "object",
+                    "desc": "secure: The secure state of text field. It's used for a password field.",
+                  },
+                  {
+                    "name": "rightButton",
+                    "type": "object",
+                    "desc": "To specify a button on the right.\n\n title: the button text\n\n click: the action of th button,\n\n time: If an action 'startCountDown' is received, the button will become a countdown style. The countdown time is defined with this attribute in second.\n\n repeatTitle: the button text after countdown completed.\n\n isSendFirst: if this attribute is true, the button will be clicked itself when it's shown the first time.",
+                  },
+                  {
+                    "name": "rightImage",
+                    "type": "object",
+                    "desc": "To specify an icon on the right. \n\nimage: the image address, it can be a local resource or an internet image.\n\nclick: the action of the image.",
+                  },
+                  {
+                    "name": "formatStyle",
+                    "type": "string",
+                    "desc": "bankCard: the input content will be shown with bank card format like '6226 2626 6622 6262'.\n\nmoney: the input content will be shown with money format like '1,234,567'.",
+                  },
+                  {
+                    "name": "unitText",
+                    "type": "string",
+                    "desc": "To specify a text label on the right.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`DRTextField` is an editable component inherited HeroTextField, the hint text will float to the top of editer while editing. And it has more properties used in some particular occasion. \n\n## Sample\n\n    {class:'DRTextField',\n    name:'passwordField',\n    frame:{x:'15',y:'60',r:'15',h:'50'},\n    theme:'black',\n    placeHolder:'密码'\n    drSecure:{'secure':false},}"
+              }
+            },
+            {
+              title:'DRTextView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "floatingPlaceHolder",
+                    "type": "string",
+                    "desc": "The hint content of the text view.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`DRTextView` is an editable component inherited HeroTextView, the hint text will float to the top of editer while editing. .\n\n## Sample\n\n    {class:'DRTextView',\n    name:'text',\n    frame:{x:'15',y:'60',r:'15',h:'150'},\n    floatingPlaceHolder:'详细地址',}"
+              }
+            },
+            {
+              title:'DRTableView',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`DRTableView` is a table component inherited HeroTableView. DRCell can be used directly in DRTableView as a row.\n\n## Sample\n\n    {class:'DRTableView',\n    name:'table',\n    frame:{x:'0',w:'1x',y:'0',b:'0'},\n    data:[\n    {\n    rows:[\n    {class:'DRCell1',title:{text:'Cell 1',}},\n    {class:'DRCell2',title:{text:'Cell 2'}}\n    ]}\n    ]}"
+              }
+            },
+            {
+              title:'DRCell',
+              descriptor:{
+                "properties": [
+                  {
+                    "name": "title",
+                    "type": "object",
+                    "desc": "text: the title text",
+                  },
+                  {
+                    "name": "description",
+                    "type": "object",
+                    "desc": "If the DRCell has a description, this attribute should be specified.\n\ntext: the description text\n\ncolor: the description text color",
+                  },
+                  {
+                    "name": "button",
+                    "type": "object",
+                    "desc": "If the DRCell has a button on it, this attribute should be specified.\n\ntext: the button text\n\nclick: the action of button",
+                  },
+                  {
+                    "name": "image",
+                    "type": "object",
+                    "desc": "If the DRCell has a image on it, this attribute should be specified.\n\nimage: the image address.",
+                  },
+                  {
+                    "name": "on",
+                    "type": "Function",
+                    "params": [],
+                    "desc": "The interface to handle json data",
+                  },
+
+                ],
+                "is": "doc-demo",
+                "desc": "# Desc\n\n`DRCell` are several cells with pre-defined style. You can quote one of them directly in a DRTableView. Now from DRCell1 to DRCell14 is available.\n\n## Sample\n\n    {class:'DRCell1',title:{text:'标题文字',},description:{'text':'说明文字',color:'3213ef',},}"
+              }
+            }
+          ]
+        }]});
+      },
+      back:function(){
+        this.fire('item-click','home');
+      },
+      menu:function(){
+        this.$.drawer.toggle();
+      }
+
+    });
+
+  </script>
+
+</dom-module>

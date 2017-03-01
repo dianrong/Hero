@@ -1,0 +1,113 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="bower_components/neon-animation/neon-animations.html">
+
+<dom-module id="pic-frame">
+  <link rel="stylesheet" href="slide-page.css"/>
+  <style>
+    div {
+      display: inline-block;
+      background-color: #eee;
+      border-radius: 8px;
+      padding: 4px;
+    }
+  </style>
+  <template>
+      <div class="right" layout vertical center end-justified><span>Powered by Polymer</span><paper-shadow z="5"></paper-shadow></div>
+    <core-animated-pages id="pages" transitions="slide-from-right" selected="{{pageIndex}}">
+      <content></content>
+    </core-animated-pages>
+    <section class="nav" layout horizontal end-justified>
+      <div layout horizontal><paper-fab start-justified icon="icons:arrow-back" id="preBtn" on-click="{{prePage}}"><paper-shadow z="5"></paper-shadow></paper-fab></div>
+      <div layout horizontal><paper-fab icon="icons:arrow-forward" id="nextBtn" on-click="{{nextPage}}"><paper-shadow z="5"></paper-shadow></paper-fab></div>
+    </section>
+  </template>
+</dom-module>
+
+<script>
+    Polymer('slide-page',{
+      pageIndex: 0,
+      pageMax: 0,
+      ready: function(){
+        this.tabIndex = 0;
+        this.pageMax = this.children.length-1;
+        this.$.pages.focus();
+        this.pageIndex = parseInt(window.location.hash.replace('#','') || 0);
+        this.toggleBtns();
+        console.log(this.pageMax);
+      },
+      keypressHandler: function(event, detail, sender){
+        var code = event.keyCode,
+          leftK = [37],
+          rightK = [32,39];
+      if(rightK.indexOf(code)!=-1){
+        this.nextPage();
+      }else if(leftK.indexOf(code)!=-1){
+        this.prePage();
+      }
+      },
+      prePage: function(){
+        this.pageIndex -= 1;
+          if(this.pageIndex <= 0) {
+            this.pageIndex = 0;
+          }
+          window.location.hash = this.pageIndex;
+          this.toggleBtns();
+      },
+      nextPage: function() {
+        this.pageIndex += 1;
+          if(this.pageIndex >= this.pageMax) {
+            this.pageIndex = this.pageMax;
+          }
+          window.location.hash = this.pageIndex;
+          this.toggleBtns();
+      },
+      toggleBtns: function(){
+        if(this.pageIndex >= this.pageMax) {
+          this.$.nextBtn.hidden = true;
+        }else{
+          this.$.nextBtn.removeAttribute('hidden');
+        }
+        if(this.pageIndex <= 0) {
+          this.$.preBtn.hidden = true;
+        }else{
+          this.$.preBtn.removeAttribute('hidden');
+        }
+      }
+    });
+
+</script>
+
+
