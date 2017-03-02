@@ -1,17 +1,52 @@
-# **hero**
-	一个简单的移动端跨平台方案
+# **给大家介绍一个更好的移动跨平台开发方案**
+	hero移动开发方案源起于点融网LB业务部门的一次无心的尝试，在点融的黑帮文化中发展出来的一个业界领先的开发方案。
 ------------------------
+先来一个类似产品的对比
 
-## 如何使用
-- 下载Hero-JS代码，使用node her.js启动服务端。
-- H5直接打开http://localhost:3000/start.html
-- iOS版本下载hero-ios代码将appDelegate中url地址设置为http://localhost:3000/start.html即可。
-- android版本下载hero-android代码将直接打开MainPageActivity修改地址为 http://XXX.XXX.XX.XX:3000/start.html即可。
+   | react native | weex | 小程序 | ionic | Hero 
+----|------|-------|------|----|----|----
+性能 | 良  | 良 | 尚可 | 尚可 | 优
+布局 | 无序性能差 | 无序性能差 | 尚可 | 无序 | 类似iOS性能好
+设备能力 | 完全 | 完全 | 不完全 | 完全 | 完全
+开发成本 | 高级跨平台工程师 | 不详 | 高级web工程师 | 高级web工程师 | 初级js程序员
+开发工具 | 多种 | 不详 | 微信web开发工具 | 多种 | Hero开发者工具
+框架代码量 | 巨大 |巨大 | 非开源 | 大 | 少
+入门难度 | 难 | 难 | 普通 | 有点难 | 容易
 
-start.html是一个hello world页面，test/list.html里面包含了所有元素的单元测试页面（在hero框架中，单元测试既文档）
+
+
+
+###### 解释上述表格
+**性能**
+react native和weex界面表现层是原生的，但是构造元素本身的操作，和元素的所有逻辑在js中，导致性能有影响
+**布局能力**
+CSS几乎可以表示一切形式的界面，无设计语言约束，但是最终效果有时候与平台的冲突会造成编程的困惑与体验的变差，react native 和weex的css依赖webview的渲染，再将结果发送给原生导致性能损失很大。微信在自家产品中的约束样式反而还不错。Hero是另辟蹊径定义了一套扩展后的frame布局，并且在各平台原生实现这套方案，布局能力达到并兼容原生app。
+**设备能力**
+微信提供了有限受控的设备能力，其它皆有完全的设备能力(系统支持)
+**开发成本**
+由于react native开发门槛较高，学习曲线很陡，特别是对移动开发人员，很难适应web开发模式，而web工程师对iOS本身的接口不熟悉，很难做出原生体验的app出来，weex应该也类似。还有不管是react native 还是weex所开发出来的页面不是完全跨平台的，它们只是开发方式是跨平台的，具体页面还是要分开开发。导致开发人员需求依旧那么多，甚至更多。而hero是一种依赖 **定义<->实现** 的开发方案，所开发的界面是平台无关的，再加上统一的元素定义格式，对于具体的页面开发人员来说，只是在配制显示的元素，非常简单。
+**开发工具**
+目前Hero的开发没有限定开发工具，sublime和atom都可以，调试就在chrome里面调试web页面就好了。集成编码、调试、托管服务端的Hero开发者工具正在开发过程当中。开发者工具本身也是用hero框架开发，目录在hero-js／heroapp当中。只需要切换到heroapp目录，使用nwjs .即可打开预览版本。
+**框架代码量**
+hero框架技术上并不复杂，核心逻辑代码不过200行。
+**入门难度**
+Hero框架中只有一个固定的controller，其它全部都是element，相比其它的MVP、MVVM、MVC有着复杂的逻辑关系，Hero中的模式就是** e **, **ee**,  **eeeeee...**,通通都是element，controller除了用来显示element，给element传递json数据之外就没有额外的逻辑了。element 中只有一个函数处理json对象，除此之外再无其它接口。每个element 都是绝对独立的，与其它元素毫无瓜葛。这样开发、测试元素都是及其简单的。
+
+## Hero 框架图
+
+![Hero　Core](http://chuantu.biz/t5/48/1488358929x3728884133.png)
+![Hero　extend](http://chuantu.biz/t5/48/1488359025x3728884133.png)
+![Hero　App](http://chuantu.biz/t5/48/1488359065x3728884133.png)
+
+## 快速开始
+- 下载Hero代码，使用node her.js启动服务端。
+- 打开http://localhost:3000 可以看到一个Hero的主页，这里面有hero的概念展示、API doc等常用信息。
+- iOS版本中集成https://github.com/dianrong/hero-ios 这个SDK，然后用HeroViewController打开一个包含Hero元素的页面即可。
+- android版本中集成https://github.com/dianrong/hero-android 这个SDK，使用HeroActivity打开一个包含Hero元素的页面即可。
+
 ## 快速开始做页面
-- 打开iOS，android项目运行sample项目，在chrome中访问http://localhost:3000/start.html (最好设置为device模式，PC web页面不是hero框架关注的方向)
-- 使用sublime2 打开hero-js代码文件夹，尝试修改start.html
+- 在chrome中访问http://localhost:3000/start.html
+- 使用sublime2 打开start代码文件夹，尝试修改index.html
 
 
 ```
@@ -84,40 +119,29 @@ start.html是一个hello world页面，test/list.html里面包含了所有元素
 @end
 ```
 	**android的实现稍微有一点不同，由于java没法多继承，也没办法往系统库中注入方法，所以在android中实现一个基础类需要在on方法中调用的HeroView的静态方法on(view,json)来完成view的初始化。如果新元素继承了Hero元素则只需要和iOS一样调用super.on(json)即可。**
-## 为什么使用hero框架
 
-**简单**
-- hero框架技术上并不复杂，核心逻辑代码不过200行
-- 面向非开发人员，页面完全json描述，简单易懂。支持yaml语法，甚至不懂json格式也没有关系(test/list.html就是使用yaml缩进语法描述的)
+## Hero 不止是一个开发框架，而是一个开发方案
 
-**快速**
-- 跨平台，做页面的时候，你并不关心页面展示的平台
-- 你可以开多个不同平台，不同尺寸的模拟器，指向同一个页面，在页面中写上
+#### 开发过程管理
+- 新的框架需求可以提交代码到hero-js/test/test/unit_test/目录,具体的提交内容是一个json文件类似
 ```
-	setTimeout(function() {
-		API.out({command:'refresh'});
-	}, 2000);
+	{
+		class:"MyLabel", 		//新功能的元素名
+		p1:"xxxxx",	  		//新熟悉接受什么样的参数，结果如何
+		text:"Hello hero !",
+		size:22,
+		frame:{"w":"1x",h:"80"},
+		alignment:"center"
+	},
 ```
-即可实现即时的多平台，多型号的页面真实效果。
+测试系统会自动为这个元素生成测试用例，如果各个平台上打开此测试用例结果都正确，表明这个元素实现完成。单元测试如下图
+![Hero　Core](http://chuantu.biz/t5/48/1488365021x3728884133.gif)
 
-**搞得定**
-- 完全的可伸缩方案，我们推荐去客户端实现更多的复杂元素，这样在HTML中描述起来就简单，但是没有实现也没有关系，再复杂的元素也都是图片，文字，线条拼装出来的。
-- 设备API调用也可通过自定义元素轻松实现，参见HeroLocationView。
-- hero框架工作在ViewController(fragment/activity/page)层,任何现有项目都可以轻松接入。
+- 测试驱动开发，由于任何新的功能都是先有测试用例才能开始，这是先天性的测试驱动开发。
+- 全平台自动化测试，如图
+![Hero　Core](http://chuantu.biz/t5/48/1488364797x3728884133.gif)
 
-**放心搞**
-- hero框架有完美的单元测试机制，而且做到了测试既文档。
-- hero框架在页面测试方面也有全新的体验。
-- hero框架在所有平台是使用单一的接入点，方便在安全方面统一把守。
-- hero框架完全开源，放心编译放心用
 
-**搞出新天地**
-- 跨平台的真原生页面，产品经理就可以轻松修改的的页面。
-- 快速的将APP本地化，定制化。
-- 支持快速变化的APP
-- 元素使用filter模式，可以创造几乎不会崩溃的APP
-- 改bug，上新版本，一般情况下，秒上生产。
-- 我在上海新天地，但是在张江，在中关村，在成都软件园，都有人开始使用hero框架。
 
 ## 贡献
 fork https://github.com/hero-mobile
