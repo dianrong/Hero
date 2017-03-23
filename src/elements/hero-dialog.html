@@ -1,0 +1,89 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<script>
+HeroDialogBehavior ={
+  properties: {
+    text:{
+      type: String
+    },
+    contentView:{
+      type:Object
+    }
+  },      
+  on: function(json) {
+    if(json.str){
+      var viewObject = JSON.parse(json.str);
+      this.contentView = document.createElement(APP.camelCase2bar(viewObject.class||viewObject.res));
+      if(this.contentView.setJson){
+        this.$.dialog.appendChild(this.contentView);
+        this.contentView.controller = this.controller;
+        this.contentView.json = (viewObject);
+      }else{
+        console.log(viewObject.class||viewObject.res);
+      }
+      var that=this;
+      setTimeout(function(){
+        var rootEl=that.contentView.$.heroContent;
+        if(rootEl){
+          rootEl.style.left = '0px';
+          rootEl.style.top = '0px';
+          that.$.dialog.style.width=rootEl.style.width;
+          that.$.dialog.style.height=rootEl.style.height;
+        }
+        that.$.dialog.open();
+      },200);
+    }
+  },
+  close:function(){
+    this.$.dialog.close();
+  }
+}
+</script>
+<dom-module id="hero-dialog">
+  <style type="text/css">
+  paper-dialog{
+    margin: 0px;
+    padding: 0px;
+  }
+  </style>
+  <template>
+    <paper-dialog id='dialog' on-tap='close'>
+
+    </paper-dialog>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "hero-dialog",
+    behaviors: [HeroBehavior,HeroDialogBehavior]
+  })
+</script>

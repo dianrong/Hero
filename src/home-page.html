@@ -1,0 +1,317 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<dom-module id="home-page">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+      .circle {
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        width: 100px;
+        height: 100px;
+        margin: 0px;
+        margin-left: 32px;
+        margin-right: 32px;
+        border-radius: 50%;
+        background-size: cover;
+
+      }
+      .item:nth-child(1) :first-child{
+        background-image: url(../images/one.png);
+      }
+      .item:nth-child(2) :first-child{
+        background-image: url(../images/two.png);
+      }
+      .item:nth-child(3) :first-child{
+        background-image: url(../images/three.png);
+      }
+      .item:nth-child(4) :first-child{
+        background-image: url(../images/four.png);
+      }
+      .item:nth-child(5) :first-child{
+        background-image: url(../images/five.png);
+      }
+      .item {
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      p{
+        text-align: center;
+        height: 20px;
+        font-size: 23px;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        line-height: 1.5;
+        color: #aaa;
+      }
+      app-header {
+        position: fixed;
+        height: 60px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.02);
+        --app-header-background-front-layer: {
+          background-image: url(//app-layout-assets.appspot.com/assets/PharrellWilliams.jpg);
+        };
+      }
+      #canvas{
+        position: absolute;
+        left: 0px;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+        height: 100%;
+      }
+      #hero_pic{
+        position: absolute;
+        left: 0px;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+        height: 100%;
+        opacity: 0.15;
+        background-size: cover;
+      }
+      #loginView{
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        left: 50%;
+        top: 50%;
+        background-color: #fff;
+        border-radius: 5px;
+        transform: translate(-50%,-50%);  
+      }
+    </style>
+    <canvas id = 'canvas'></canvas>
+    <div id = 'hero_pic'></div>
+
+    <app-header effects="waterfall resize-title blend-background parallax-background" condenses reveals>
+      <app-toolbar id='title'>
+        <div condensed-title>Hero Mobile</div>
+        <paper-button on-tap='login'>登录</paper-button>
+      </app-toolbar>
+    </app-header>
+
+
+    <div id = 'contentBk'>
+      <div class='item'>
+        <paper-material class="circle" on-tap='onClick' heroName='guide'></paper-material>
+        <p>Concept</P>
+      </div>
+      <div class='item'>
+        <paper-material class="circle" on-tap='onClick' heroName='code'></paper-material>
+        <p>Coding</P>
+      </div>
+      <div class='item'>
+        <paper-material class="circle" on-tap='onClick' heroName='doc'></paper-material>
+        <p>Doc</P>
+      </div>
+      <div class='item'>
+        <paper-material class="circle" on-tap='onClick' heroName='about'></paper-material>
+        <p>About</P>
+      </div>
+      <div class='item'>
+        <paper-material class="circle" on-tap='onClickDemo' heroName='demo'></paper-material>
+        <p>Demo</P>
+      </div>
+    </div>
+<!--     <div id = 'loginView'>
+      <paper-input>username</paper-input>
+      <paper-input>password</paper-input>
+    </div>
+ -->  </template>
+
+</dom-module>
+<script>
+
+  Polymer({
+
+    is: 'home-page',
+
+    behaviors: [
+      HeroBehavior,Polymer.NeonSharedElementAnimatableBehavior
+    ],
+
+    properties: {
+
+      animationConfig: {
+        value: function() {
+          var circles = Polymer.dom(this.root).querySelectorAll('.circle');
+          var circlesArray = Array.prototype.slice.call(circles);
+          return {
+            'entry': [{
+              name: 'cascaded-animation',
+              animation: 'scale-up-animation',
+              nodes: circlesArray
+            },{
+              name: 'cascaded-animation',
+              animation: 'fade-in-animation',
+              nodes :this.$.title.children
+            }],
+            'exit': [{
+              name: 'hero-animation',
+              id: 'hero1',
+              fromPage: this
+            }, {
+              name: 'cascaded-animation',
+              animation: 'scale-down-animation',
+              nodes :circlesArray
+            }]
+          };
+        }
+      }
+    },
+    onClick:function(){
+      var target = event.target;
+      this.sharedElements = {
+        'hero1': target
+      };
+      this.fire('item-click',target.attributes.heroname.value);
+    },
+    onClickDemo:function(){
+      window.open("/sample/hero_mobile.html");
+    },
+    login:function(){
+
+    },
+    ready:function(){
+      this.run();
+      this.$.hero_pic.style.backgroundImage = 'url(../images/hero_3.jpg)';
+    },
+    run:function(){
+      var stars = [];
+      var count = 0;
+      var animate;
+      var that = this;
+      function starMove() {
+          "use strict";
+          var canvas = that.$.canvas;
+          var ctx = canvas.getContext('2d');
+          var w = canvas.width = window.innerWidth;
+          var h = canvas.height = window.innerHeight;
+          var hue = 217;
+          var maxStars = 300;
+          stars = [];
+          count = 0;
+
+          var canvas2 = document.createElement('canvas'),
+                  ctx2 = canvas2.getContext('2d');
+
+          canvas2.width = 100;
+          canvas2.height = 100;
+          var half = canvas2.width / 2,
+                  gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+          gradient2.addColorStop(0.025, '#CCC');
+          gradient2.addColorStop(0.1, 'hsl(' + hue + ', 11%, 63%)');
+          gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+          gradient2.addColorStop(1, 'transparent');
+          ctx2.fillStyle = gradient2;
+          ctx2.beginPath();
+          ctx2.arc(half, half, half, 0, Math.PI * 2);
+          ctx2.fill();
+          function random(min, max) {
+              if (arguments.length < 2) {
+                  max = min;
+                  min = 0;
+              }
+              if (min > max) {
+                  var hold = max;
+                  max = min;
+                  min = hold;
+              }
+              return Math.floor(Math.random() * (max - min + 1)) + min;
+          }
+
+          function maxOrbit(x, y) {
+              var max = Math.max(x, y),
+                      diameter = Math.round(Math.sqrt(max * max + max * max));
+              return diameter / 2;
+          }
+
+          var Star = function () {
+              this.orbitRadius = random(maxOrbit(w, h));
+              this.radius = random(60, this.orbitRadius) / 10;
+              this.orbitX = w / 2;
+              this.orbitY = h / 2;
+              this.timePassed = random(0, maxStars);
+              this.speed = random(this.orbitRadius) / 400000;
+              this.alpha = random(2, 10) / 20;
+              count++;
+              stars[count] = this;
+          }
+          Star.prototype.draw = function () {
+              var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
+                      y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY,
+                      twinkle = random(10);
+              if (twinkle === 1 && this.alpha > 0) {
+                  this.alpha -= 0.05;
+              } else if (twinkle === 2 && this.alpha < 1) {
+                  this.alpha += 0.05;
+              }
+              ctx.globalAlpha = this.alpha;
+              ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+              this.timePassed += this.speed;
+          }
+          setTimeout(function () {
+              count = 0
+              for (var i = 0; i < maxStars; i++) {
+                  new Star();
+              }
+          }, 100)
+          function animation() {
+              ctx.globalCompositeOperation = 'source-over';
+              ctx.globalAlpha = 0.5; //尾巴
+              ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 2)';
+              ctx.fillRect(0, 0, w, h)
+              ctx.globalCompositeOperation = 'lighter';
+              for (var i = 1, l = stars.length; i < l; i++) {
+                  stars[i].draw();
+              }
+              animate = window.requestAnimationFrame(animation);
+          }
+
+          animation();
+      }
+      starMove();
+    }
+  });
+
+</script>

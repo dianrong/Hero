@@ -1,0 +1,176 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<dom-module id="mafia-loan-table-cell">
+    <style type="text/css">
+    #heroContent{
+      display: block;
+      height: 163px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      background-color: #F3F1F2;
+    }
+    #background{
+      display: block;
+      position: absolute;
+      top: 12px;
+      bottom: 0px;
+      width: 100%;
+      background-color: #fff;
+      border-top:1px solid #ddd;
+      border-bottom:1px solid #ddd;
+    }
+    p{
+      position: absolute;
+      display: inline-block;
+      pointer-events:none;
+    }
+    #title{
+      left:15px;
+      top: 0px;
+      width: 160px;
+      height: 30px;
+      font-size: 22px;
+      color: #37455c;
+    }
+    #des{
+      left:15px;
+      top:43px;
+      font-size: 12px;
+      color: #999999;
+    }
+    #flag1{
+      padding-left: 4px;
+      padding-right: 4px;
+      right:75px;
+      top:14px;
+      font-size: 12px;
+      color: #00bc8d;
+      background-color: #f2fffd;
+      border-radius: 3px;
+    }
+    #flag2{
+      padding-left: 4px;
+      padding-right: 4px;
+      right:15px;
+      top:14px;
+      font-size: 12px;
+      color: #ff5500;
+      background-color: #FFEEEE;
+      border-radius: 3px;
+    }
+    #div{
+      right:15px;
+      left: 15px;
+      top:68px;
+      height: 1px;
+      border-top:1px dashed #e4e4e4;
+    }
+    #price{
+      left:15px;
+      top: 58px;
+      width: 160px;
+      height: 30px;
+      font-size: 33px;
+      color: #37455C;
+    }
+    #priceDesc{
+      left:15px;
+      top: 128px;
+      width: 160px;
+      height: 30px;
+      font-size: 12px;
+      color: #999999;
+    }
+    #mount{
+      left:50%;
+      top: 58px;
+      width: 160px;
+      height: 30px;
+      font-size: 33px;
+      color: #37455C;
+    }
+    #mountDesc{
+      left:50%;
+      top: 128px;
+      width: 160px;
+      height: 30px;
+      font-size: 12px;
+      color: #999999;
+    }
+    #next{
+      right:15px;
+      top: 128px;
+      height: 20px;
+      font-size: 12px;
+      color: #999999;
+    }
+    </style>
+  <template>
+    <div id='heroContent'>
+      <paper-button id='background' on-tap='onTap'></paper-button>
+      <p id='title'></p>
+      <p id='des'></p>
+      <p id='flag1'>零抵押</p>
+      <p id='flag2'>1天放款</p>
+      <p id='div'></p>
+      <p id='price'></p>
+      <p id='priceDesc'>最低年化利率</p>
+      <p id='mount'></p>
+      <p id='mountDesc'>最高借款总额</p>
+      <p id='next'> 详情 ></p>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "mafia-loan-table-cell",
+      behaviors: [HeroBehavior],
+      properties: {
+        items:{
+          type: Object
+        }
+      },      
+      onTap:function(){
+        this.controller.on(this.json);
+      },
+      on: function(json) {
+        this.$.title.innerHTML = json.name;
+        this.$.des.innerHTML = json.des;
+        this.$.price.innerHTML = json.price;
+        this.$.mount.innerHTML = json.topValue;
+        this.$.flag1.style.display = json.flag1?'inline-block':'none';
+        this.$.flag2.style.display = json.flag2?'inline-block':'none';
+
+      },
+    })
+</script>

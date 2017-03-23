@@ -1,0 +1,558 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-down-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-right-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-from-top-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="elements/hero-behavior.html">
+<link rel="import" href="hero-view-controller.html">
+<link rel="import" href="elements/hero-button.html">
+<link rel="import" href="elements/hero-view.html">
+<link rel="import" href="elements/hero-web-view.html">
+<link rel="import" href="elements/hero-table-view.html">
+<link rel="import" href="elements/hero-table-view-cell.html">
+<link rel="import" href="elements/hero-table-view-section.html">
+<link rel="import" href="elements/ui-view.html">
+<link rel="import" href="elements/hero-label.html">
+<link rel="import" href="elements/hero-text-view.html">
+<link rel="import" href="elements/hero-text-field.html">
+<link rel="import" href="elements/hero-image-view.html">
+<link rel="import" href="elements/hero-loading.html">
+<link rel="import" href="elements/hero-toolbar-item.html">
+<link rel="import" href="elements/hero-check-box.html">
+<link rel="import" href="elements/hero-toast.html">
+<link rel="import" href="elements/hero-slider.html">
+<!-- <link rel="import" href="elements/hero-location-view.html"> -->
+<link rel="import" href="elements/hero-device.html">
+<link rel="import" href="elements/hero-confirm.html">
+<link rel="import" href="elements/hero-alert.html">
+<link rel="import" href="elements/hero-switch.html">
+<link rel="import" href="elements/hero-scroll-view.html">
+<!-- <link rel="import" href="elements/hero-scan-bar-code-view.html"> -->
+<link rel="import" href="elements/hero-dialog.html">
+
+<!-- <link rel="import" href="elements/mafia-loan-table.html"> -->
+<!-- <link rel="import" href="elements/mafia-loan-table-cell.html">
+<link rel="import" href="elements/mafia-ocr-view.html">
+ -->
+<!-- <link rel="import" href="elements/dr-a-b-test.html"> -->
+<link rel="import" href="elements/dr-slider-view.html">
+<link rel="import" href="elements/dr-text-field.html">
+<link rel="import" href="elements/dr-table-view.html">
+<link rel="import" href="elements/dr-table-view-cell.html">
+<link rel="import" href="elements/dr-button.html">
+<link rel="import" href="elements/dr-code-view.html">
+
+<dom-module id="hero-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: absolute;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #bar {
+        display:block;
+        position: absolute;
+        overflow:hidden;
+        top: 0px;
+        width: 100%;
+        height: 44px;
+        background-color: #ffffff;
+        border-bottom:1px solid #ddd;
+      }
+      #tab {
+        display:block;
+        position: absolute;
+        overflow:hidden;
+        bottom: 0px;
+        width: 100%;
+        height: 44px;
+        background-color: #fff;
+        border-top:1px solid #ddd;
+      }
+      #cover {
+        display:block;
+        position: absolute;
+        overflow:hidden;
+        height: 100%;
+        width: 100%;
+        background-color: #fff;
+        background-size:cover;
+        /*background-image: url('../images/default.png');*/
+      }
+      #title {
+        display:inline-block;
+        position: absolute; 
+        overflow:hidden;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        font-size: 20px;
+        text-align: center;
+        margin: 10px;
+        pointer-events:none;
+      }
+      #leftBtn {
+        display:none;
+        position: absolute;
+        overflow:hidden;
+        color: #fff;
+        width: 70px;
+        height: 25px;
+        left:10px;
+        top:12px;
+      }
+      #backBtn {
+        display:none;
+        position: absolute;
+        overflow:hidden;
+        width: 25px;
+        height: 25px;
+        left:10px;
+        top:12px;
+      }
+      #rightBtn {
+        display:none;
+        position: absolute;
+        overflow:hidden;
+        width: 70px;
+        height: 25px;
+        right:10px;
+        top:12px;
+      }
+      neon-animated-pages{
+        display:block;
+        position: absolute;
+        overflow:hidden;
+        top: 44px;
+        bottom: 100%;
+        width: 100%;
+      }
+      @keyframes backBtnIn
+      {
+        from {opacity: 0;}
+        to {opacity: 1;}
+      }
+      @keyframes backBtnOut
+      {
+        from {opacity: 1;}
+        to {opacity: 0;}
+      }
+      @keyframes coverGo
+      {
+        from {opacity: 1;}
+        to {opacity: 0;}
+        from {transform:scale(1,1);}
+        to {transform:scale(1.1,1.1);}
+      }
+    </style>
+    <div id='bar'>
+      <hero-button class='btn' id ='backBtn'></hero-button>
+      <hero-button class='btn' id ='leftBtn'></hero-button>
+      <hero-button class='btn' id ='rightBtn'></hero-button>
+      <p id='title'></p>
+    </div>
+    <neon-animated-pages id='pages' role="main" attr-for-selected="name" >
+    </neon-animated-pages>
+    <div id='tab'></div>
+    <div id='cover'></div>
+  </template>
+
+  <script>
+    var localStorageTemp = {};
+    try {
+        window.localStorage.boot = "{}";
+    } catch(e) {
+        window.__defineGetter__('localStorage', function() {
+          return localStorageTemp;
+        });
+    }
+  </script>
+  <script>
+
+    Polymer({
+      is: 'hero-app',
+      behaviors: [HeroBehavior],
+      properties: {
+        loadedPages : {
+          type: Array,
+          value:[]
+        },
+        rootPages : {
+          type: Array,
+          value:[]
+        },
+        pageStack : {
+          type: Array,
+          value:[]
+        },
+        currentPage : {
+          type: Object
+        },
+        tabs : {
+          type: Array
+        },
+      },
+      on:function(json){
+        if (json.tabs) {
+          this.tabs = json.tabs;
+          for (var i = 0; i < json.tabs.length; i++) {
+            var tab =json.tabs[i];
+            this.rootPages.push(this.page2Element(tab.url));
+            var item = document.createElement('hero-toolbar-item');
+            this.$.tab.appendChild(item);
+            item.controller = this;
+            item.oon(
+              {
+                frame:{x:i/json.tabs.length+'x',w:1/json.tabs.length+'x',y:'0',h:'44'},
+                image:tab.image,
+                title:tab.title,
+                selected:(i==0),
+                click:{select:i+1}
+             });
+          };
+          if (this.tabs.length == 1) {
+            this.$.tab.style.display = 'none';
+            this.$.pages.style.bottom = '0px';
+          }
+          this.gotoPage(json.tabs[0].url);
+          if (json.loadPage) {
+            var that = this;
+            setTimeout(function(){
+              that.gotoPage(json.loadPage);
+            },1500);
+          }
+        };
+        if (json.select) {
+          for (var i = 0; i < this.$.tab.children.length; i++) {
+            var item = this.$.tab.children[i];
+            item.on({selected:(i==json.select-1)});
+          };
+          this.$.title.innerHTML = this.json.tabs[json.select-1].title;
+          this.gotoPage(this.json.tabs[json.select-1].url);
+        };
+        if (json.goBack) {
+          window.history.back();
+        }
+        if (json.command) {
+
+        };
+      },
+      str2Color:function(str){
+        if (str.length == 3 || str.length == 6) {
+          return '#'+str;
+        }else if(str.length == 8){
+          var r = parseInt('0x'+str.substr(0,2)); 
+          var g = parseInt('0x'+str.substr(2,2)); 
+          var b = parseInt('0x'+str.substr(4,2)); 
+          var a = parseInt('0x'+str.substr(6,2))/255; 
+          return 'rgba('+r+','+g+','+b+','+a+')';
+        }
+      },
+      camelCase2bar:function(str){
+          var low = str.toLowerCase();
+          var des = low.substr(0,2);
+          for(var i = 2 ; i < str.length;i++){
+            if (str.charAt(i) !== low.charAt(i)) {
+              des = des.concat('-' + low.charAt(i));
+            }else{
+              des = des.concat(low.charAt(i));
+            };
+          }
+          return des;
+      },
+      remove:function(arr,value) {if(!arr)return;var a = arr.indexOf(value);if (a >= 0){arr.splice(a, 1)}},
+      contain:function(objs,obj){var i = objs.length;while (i--) {if (objs[i] === obj) {return true;}}return false;},
+      registerElement:function(element){
+        if (!this.contain(this.loadedPages,element)) {
+          this.loadedPages.push(element);
+          Polymer({
+            is: element,
+            behaviors: [HeroViewController],
+            ready:function(){
+            }
+          });
+        };
+      },
+      page2Element:function(page){
+        // if (page.search(window.location.host) < 0) {
+        //   return page;
+        // };
+        var pageElement = page.replace('_','-');
+        if (page.search(/.html/) > 0) {
+          pageElement = pageElement.split('/').pop();
+          if (pageElement.search(/\?/)>0) {
+            pageElement = pageElement.split('?')[0];
+          };
+          pageElement = pageElement.replace('.html','');
+          pageElement = pageElement.search(/-/)>0?pageElement:'hero-'+pageElement;
+        };
+        return pageElement;
+      },
+      ready:function(){
+        window.APP = this;
+        window.addEventListener('popstate', function(e) {
+          if (e.state) {
+            window.APP.gotoPage(e.state.state,'back');
+          };
+        });
+        this.$.backBtn.controller = this;
+        this.$.backBtn.oon({image:'back.png',click:{goBack:true}});
+        this.$.rightBtn.oon({title:'right',titleColor:'ffffff'});
+        this.$.cover.style.animation = 'coverGo 2s';
+        var that = this;
+        setTimeout(function(){
+          that.$.cover.style.display = 'none';
+        },1800);
+        window.last_API = '';
+        window.__defineSetter__('API', function(v) {
+          window[window.location.href+'_API'] = v;
+        });
+        window.__defineGetter__('API', function() {
+          var _api = window[window.location.href+'_API'];
+          if (_api) {
+            window.last_API = _api;
+          };
+          return window.last_API;
+        });
+        window.last_ui2Data = '';
+        window.__defineSetter__('ui2Data', function(v) {
+            window[window.location.href+'_ui2Data'] = v;
+        });
+        window.__defineGetter__('ui2Data', function() {
+          var _ui2Data = window[window.location.href+'_ui2Data'];
+          if (_ui2Data) {
+            window.last_ui2Data = _ui2Data;
+          };
+          return window.last_ui2Data;
+        });
+      },
+      setNav:function(nav){
+        if (nav) {
+          if (nav.nav) {
+            nav = nav.nav;
+          };
+          this.$.title.innerHTML = nav.title||'';
+          document.title = nav.title||'';
+          if (nav.tintColor) {
+            this.$.bar.style.backgroundColor = this.str2Color(nav.tintColor);
+          };
+          if (nav.navigationBarHidden || nav.navigationBarHiddenH5) {
+            this.$.bar.style.height = '0px';
+            this.$.pages.style.top = '0px';
+          }else {
+            this.$.bar.style.height = '44px';
+            this.$.pages.style.top = '44px';
+          };
+          if (nav.leftItems && nav.leftItems.length>0) {
+            this.$.backBtn.style.display = 'none';
+            this.$.backBtn.style.animation = 'backBtnOut 0.25s';
+            this.$.leftBtn.style.display = 'inline-block';
+            this.$.leftBtn.on(nav.leftItems[0]);
+            this.$.leftBtn.controller = this.currentPage;
+          }else{
+            this.$.leftBtn.style.display = 'none';
+            if (this.contain(this.rootPages,this.currentPage.name)) {
+              this.$.backBtn.style.display = 'none';
+              this.$.backBtn.style.animation = 'backBtnOut 0.25s';
+            }else{
+              this.$.backBtn.style.display = 'inline-block';
+              this.$.backBtn.style.animation = 'backBtnIn 0.25s';
+            }
+          }
+          if (nav.rightItems && nav.rightItems.length>0) {
+            this.$.rightBtn.on(nav.rightItems[0]);
+            this.$.rightBtn.controller = this.currentPage;
+            this.$.rightBtn.style.display = 'inline-block'
+          }else{
+            this.$.rightBtn.style.display = 'none'
+          } 
+        };
+      },
+      loadPage:function(page){
+        var pageElement = this.page2Element(page);
+        if(!this.contain(this.loadedPages,pageElement)){
+          this.registerElement(pageElement);
+          var that = this;
+          window.API = undefined;
+          window.ui = undefined;
+          if (page.search(/localhost/) > 0) {
+            if (page.endWith('html')) {
+              page = page + '?test=true';
+            }else{
+              page = page + '&test=true';
+            }
+          };
+          this.importHref(
+            this.resolveUrl(page), function(){
+                that.currentPage = document.createElement(pageElement);
+                that.currentPage.name = pageElement;
+                that.currentPage.url = page;
+                if (that.$.pages.__domApi) {
+                  that.$.pages.__domApi.appendChild(that.currentPage);
+                }else{
+                  setTimeout(function(){
+                    that.$.pages.__domApi.appendChild(that.currentPage);
+                  },1100);
+                }
+                that.$.pages.selected = pageElement;
+            }, function(err){
+                that.currentPage = document.createElement(pageElement);
+                that.currentPage.name = pageElement;
+                that.currentPage.url = page;
+                that.$.pages.__domApi.appendChild(that.currentPage);
+                that.$.pages.selected = pageElement;
+            }, true);
+        }else{
+          for (var i = 0; i < this.$.pages.children.length; i++) {
+            var e = this.$.pages.children[i];
+            if (e.name == pageElement) {
+              this.currentPage = e;
+              this.$.pages.selected = pageElement;
+              if (!API.contain(this.pageStack,pageElement)) {
+                e.viewDidLoad();
+              }
+              e.viewWillAppear();
+            };
+          };
+        }
+      },
+      gotoPage:function(page,option){
+        var pageElement = this.page2Element(page);
+        if (pageElement.search(/http/)>=0) {
+            window.open(pageElement, '_blank');
+            window.focus();
+            return;
+        };
+        if (this.contain(this.rootPages,pageElement) && this.rootPages.length > 1) {
+          this.$.tab.style.display = 'block';
+          this.$.pages.style.bottom = '44px';
+          this.$.backBtn.style.display = 'none';
+        }else{
+          this.$.tab.style.display = 'none';
+          this.$.pages.style.bottom = '0px';
+        }
+        if (this.contain(this.pageStack,pageElement)) {
+          if (this.contain(this.rootPages,this.pageStack[this.pageStack.length-1])) {
+            this.$.pages.entryAnimation = '';
+            this.$.pages.exitAnimation = '';
+          }else{
+            this.$.pages.exitAnimation = this.$.pages.entryAnimation=='slide-from-bottom-animation'?'slide-down-animation':'slide-right-animation';
+            this.$.pages.entryAnimation = 'fade-in-animation';
+          }
+        }else{
+          if(this.contain(this.rootPages,pageElement)){
+            this.$.pages.entryAnimation = '';
+            this.$.pages.exitAnimation = '';
+          }else{
+            this.$.pages.entryAnimation = 'slide-from-right-animation';
+            this.$.pages.exitAnimation = 'fade-out-animation';
+          }
+        };
+        if (option == 'present') {
+          this.$.pages.entryAnimation = 'slide-from-bottom-animation';
+          this.$.pages.exitAnimation = 'fade-out-animation';
+        }else if(option == 'dissmiss'){
+          this.$.pages.entryAnimation = 'slide-from-top-animation';
+          this.$.pages.exitAnimation = 'fade-out-animation';
+        }
+        else if(option == 'load'){
+          this.$.pages.entryAnimation = 'fade-in-animation';
+          this.$.pages.exitAnimation = 'fade-out-animation';
+        }
+        if (this.$.pages.selectedItem) {
+          this.$.pages.selectedItem.viewWillDisappear();
+        };
+        if (option != 'dissmiss' && option != 'back' && option != 'rootBack' && option != 'load') {
+          history.pushState({state:page}, pageElement, "?state="+page);
+        };
+        if (history.state && history.state.state === page || option === 'load') {
+          history.replaceState({state:page},pageElement,"?state="+page);
+        }
+        this.loadPage(page);
+        if (!this.contain(this.pageStack,pageElement)) {
+          this.pageStack.push(pageElement);
+        }else{
+          while(this.pageStack[this.pageStack.length-1] != pageElement){
+            this.pageStack.pop();
+          }
+        }
+      },
+
+    });
+    String.prototype.endWith=function(str){
+      if(str==null||str==""||this.length==0||str.length>this.length)
+        return false;
+      if(this.substring(this.length-str.length)==str)
+        return true;
+      else
+        return false;
+      return true;
+    }
+    String.prototype.startWith=function(str){
+      if(str==null||str==""||this.length==0||str.length>this.length)
+        return false;
+      if(this.substr(0,str.length)==str)
+        return true;
+      else
+        return false;
+      return true;
+    }
+
+  </script>
+
+</dom-module>

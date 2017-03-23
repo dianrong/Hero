@@ -1,0 +1,24 @@
+{
+  "name": "hero-mobile/core",
+  "version": "1.0.3",
+  "description": "a hero imp by js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dianrong/Hero.git"
+  },
+  "keywords": [
+    "hero",
+    "framework",
+    "mobile"
+  ],
+  "author": "gpliu",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/dianrong/Hero/issues"
+  },
+  "homepage": "https://github.com/dianrong/Hero#readme"
+}

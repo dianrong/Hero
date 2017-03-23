@@ -1,0 +1,315 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<script>
+    HeroBehavior = {
+      properties: {
+        json: {
+          type: Object,
+          observer: 'setJson'
+        },
+        controller:{
+          type: Object,
+          observer:'setController'
+        },
+        heroLayoutListenners:{
+          type:Array,
+        }
+      },
+      getName:function(){
+        if (this.json.name) {return this.json.name};
+        return this.nodeName;
+      },
+      setJson: function(json) {
+        var isThisCalled = false;
+        for (var i = 0; i < this.behaviors.length; i++) {
+          var behavior = this.behaviors[i];
+          if (behavior.on) {
+            if (behavior.on == this.on) {
+              isThisCalled = true;
+            };
+            behavior.on.apply(this, [json]);
+          };
+        };
+        if (!isThisCalled) {
+            this.on(json);
+        };
+      },
+      oon:function(json){
+        for (var i = 0; i < this.behaviors.length; i++) {
+          var behavior = this.behaviors[i];
+          if (behavior.on) {
+            behavior.on.apply(this, [json]);
+          };
+        };
+        if (this.on) {
+          this.on(json);
+        };
+      },
+      setController:function(controller){
+        if (this.$.heroContent) {
+          for (var i = 0; i < this.$.heroContent.children.length; i++) {
+            var child = this.$.heroContent.children[i];
+            if (child.setController) {
+              child.controller = controller;
+            };
+          };
+        }
+        if (this.$.heroContent1) {
+          for (var i = 0; i < this.$.heroContent1.children.length; i++) {
+            var child = this.$.heroContent1.children[i];
+            if (child.setController) {
+              child.controller = controller;
+            };
+          };
+        };
+      },
+      getParentSize:function(node){
+        var p = node.parentElement;
+        if (p) {
+          if (p.getBoundingClientRect().width>0 && p.getBoundingClientRect().height>0) {
+            return {w:p.getBoundingClientRect().width,h:p.getBoundingClientRect().height};
+          }else if(p.style.width.substr(p.style.width.length-2,2) == 'px'){
+            return {w:(parseInt(p.style.width)!=0)?parseInt(p.style.width):window.innerWidth,h:(parseInt(p.style.height)!=0)?parseInt(p.style.height):window.innerHeight};
+          }else{
+            return this.getParentSize(p);
+          }
+        }
+        return {w:window.innerWidth,h:window.innerHeight};
+      },
+      ready:function(){
+      },
+      on: function(json) {
+        if (typeof(json) === 'string') {
+          this.json = eval('(' + decodeURIComponent(json) + ')');
+          return;
+        };
+        if(json !== undefined){
+          if (!this.json) {
+            this.json = json;
+          };
+          if (json.name) {
+            this.id = json.name;
+          };
+          if (json.frame) {
+            if (!json.frame.p) {
+              json.frame.p = this.getParentSize(this);
+            };
+            var frame = json.frame;
+            var x = frame.x ? frame.x : frame.l;
+            var y = frame.y ? frame.y : frame.t;
+            var w = frame.w;
+            var h = frame.h;
+            var r = frame.r;
+            var b = frame.b;
+            var xInt, yInt, wInt, hInt;
+            if (x) {
+              xInt = x.charAt(x.length - 1) === 'x' ? (parseFloat(x) * frame.p.w) : parseInt(x);
+            };
+            if (y) {
+              yInt = y.charAt(y.length - 1) === 'x' ? (parseFloat(y) * frame.p.h) : parseInt(y);
+            };
+            if (w) {
+              wInt = w.charAt(w.length - 1) === 'x' ? (parseFloat(w) * frame.p.w) : parseInt(w);
+            };
+            if (h) {
+              hInt = h.charAt(h.length - 1) === 'x' ? (parseFloat(h) * frame.p.h) : parseInt(h);
+            };
+            if (r) {
+              if (!x) {
+                xInt = frame.p.w - (wInt + (r.charAt(r.length - 1) === 'x' ? parseFloat(r) * frame.p.w : parseInt(r)));
+              } else {
+                wInt = frame.p.w - (xInt + (r.charAt(r.length - 1) === 'x' ? parseFloat(r) * frame.p.w : parseInt(r)));
+              };
+            };
+            if (b) {
+              if (!y) {
+                yInt = frame.p.h - (hInt + (b.charAt(b.length - 1) === 'x' ? parseFloat(b) * frame.p.h : parseInt(b)));
+              } else {
+                hInt = frame.p.h - (yInt + (b.charAt(b.length - 1) === 'x' ? parseFloat(b) * frame.p.h : parseInt(b)));
+              };
+            };
+            this.$.heroContent.style.left = xInt + 'px';
+            this.$.heroContent.style.top = yInt + 'px';
+
+            this.$.heroContent.style.width = wInt + 'px';
+            this.$.heroContent.style.height = hInt + 'px';
+
+            this.height = hInt;
+
+            if (json.yOffset) {
+              var refName = json.yOffset.split(/\+/)[0];
+              var offset = parseFloat(json.yOffset.split(/\+/)[1]);
+              var top = this.controller.findViewByname(refName,this.controller.heroContent);
+              top = top || this.controller.findViewByname(refName,this.parentElement);
+              if (top) {
+                var heroContent = top.$.heroContent;
+                if (heroContent.style.top && heroContent.style.top !== 'auto') {
+                  var h = heroContent.style.height?parseFloat(heroContent.style.height):0;
+                  var ctop = parseFloat(heroContent.style.top) + h + offset;
+                  this.$.heroContent.style.top = ctop + 'px';
+                  this.top = ctop;
+                }
+                if (!top.heroLayoutListenners) { top.heroLayoutListenners = []};
+                if (!APP.contain(top.heroLayoutListenners,this)) {
+                  top.heroLayoutListenners.push(this);
+                };
+              }
+            }
+            if (json.xOffset) {
+              var refName = json.xOffset.split(/\+/)[0];
+              var offset = parseFloat(json.xOffset.split(/\+/)[1]);
+              var top = this.controller.findViewByname(refName,this.controller.heroContent);
+              top = top || this.controller.findViewByname(refName,this.parentElement);
+              if (top) {
+                var heroContent = top.$.heroContent;
+                if (heroContent.style.left && heroContent.style.left !== 'auto') {
+                  var w = heroContent.style.width?parseFloat(heroContent.style.width):0;
+                  var ctop = parseFloat(heroContent.style.left) + w + offset;
+                  this.$.heroContent.style.left = ctop + 'px';
+                  this.left = ctop;
+                }
+                if (!top.heroLayoutListenners) { top.heroLayoutListenners = []};
+                if (!APP.contain(top.heroLayoutListenners,this)) {
+                  top.heroLayoutListenners.push(this);
+                };
+              }
+            }
+            if (this.json.contentSizeElement) {
+              if (this.$.heroContent.style.display != 'none' && this.parent) {
+                this.parent.json.frame.h = yInt+hInt+'';
+                this.parent.json.frame.w = xInt+wInt+'';
+                var frame = this.parent.json.frame;
+                this.parent.oon({frame:frame});
+              };
+            };
+            if (this.json.contentSizeElementY) {
+              if (this.$.heroContent.style.display != 'none' && this.parent) {
+                this.parent.json.frame.h = parseInt(this.$.heroContent.style.top)+parseInt(this.$.heroContent.style.height)+'';
+                var frame = this.parent.json.frame;
+                this.parent.oon({frame:frame});
+              };
+            };
+            if (this.heroLayoutListenners) {
+              for (var i = 0; i < this.heroLayoutListenners.length; i++) {
+                var o = this.heroLayoutListenners[i];
+                o.oon({frame:o.json.frame,yOffset:o.json.yOffset});
+              };
+            };
+        }
+        
+        if (json.center) {
+          if (!json.frame || !json.frame.p) {
+            var frame = json.frame || {};
+            frame.p = {w:window.screen.width,h:window.screen.height};
+          };
+          var w = this.$.heroContent.style.width;
+          var h = this.$.heroContent.style.height;
+          var x = json.center.x;
+          var y = json.center.y;
+          if (x) {
+            var wInt = parseFloat(w);
+            var xInt = x.charAt(x.length-1) === 'x'?(parseFloat(x)*frame.p.w):parseInt(x);
+            this.$.heroContent.style.left=xInt-wInt/2+'px';
+          };
+          if (y) {
+            var hInt = parseFloat(h);
+            var yInt = y.charAt(y.length - 1) === 'x'?(parseFloat(y) * frame.p.h):parseInt(y);
+            this.$.heroContent.style.top = yInt - hInt/2 + 'px';
+          };
+        };
+        if (json.alpha) {
+          this.$.heroContent.style.opacity = json.alpha;
+        };
+        if (json.backgroundColor) {
+          this.$.heroContent.style.background = APP.str2Color(json.backgroundColor);
+        };
+        if (json.tinyColor) {
+          this.$.heroContent.style.color = '#' + json.tinyColor;
+        };
+        if (json.hasOwnProperty("hidden") ) {
+          if (json.hidden) {
+            // this.$.heroContent.hidden = 'hidden';
+            this.$.heroContent.style.display = 'none';
+          }else{
+            this.$.heroContent.style.display = 'block';
+            // this.$.heroContent.hidden = undefined;
+            // delete this.$.heroContent['hidden'];
+          }
+        };
+        if (json.hasOwnProperty("h5_hidden") ) {
+          if (json.h5_hidden) {
+            this.$.heroContent.style.display = 'none';
+          }else{
+            this.$.heroContent.style.display = 'block';
+          }
+        };
+        if (json.borderWidth) {
+          this.$.heroContent.style.borderStyle = 'solid';
+          this.$.heroContent.style.borderWidth = json.borderWidth + 'px';
+        };
+        if (json.cornerRadius) {
+          this.$.heroContent.style.borderRadius = json.cornerRadius + 'px';
+        };
+        if (json.borderColor) {
+          this.$.heroContent.style.border = (json.borderWidth?json.borderWidth:1)+'px solid #'+json.borderColor;
+        };
+        if (json.zIndex) {
+          this.$.heroContent.style.zIndex = json.zIndex;
+        };
+
+        if (json.autolayout) {
+          
+        }
+        if (json.subViews) {
+          while (this.$.heroContent.lastChild) {
+             this.$.heroContent.removeChild(this.$.heroContent.lastChild);
+          }
+          var views = json.subViews;
+          for(var num in views){
+            var viewObject = views[num];
+            var view = document.createElement(APP.camelCase2bar(viewObject.class||viewObject.res));
+            if(!view.setJson){
+              console.log(viewObject.class||viewObject.res);
+            }
+            this.$.heroContent.appendChild(view);
+            view.controller = this.controller;
+            view.parent = this;
+            view.json = (viewObject);
+          }
+        }
+        if (json.hasOwnProperty("enable") ) {
+          this.$.heroContent.style.pointerEvents = json.enable?'':'none';
+        };
+      }
+      },
+
+    };
+</script>

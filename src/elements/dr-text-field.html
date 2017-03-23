@@ -1,0 +1,124 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+ <dom-module id="dr-text-field">
+     <style type="text/css">
+    div{
+      display: inline-block;
+      position: absolute;
+      overflow: hidden;
+    }
+    paper-input {display: block;margin: 0px;padding: 0px;width:100%;height:100%;}
+    input {
+      display: none;
+      position: absolute;
+      margin: 0px;
+      padding: 0px;
+      width: 90%;
+      height: 100%;
+      left: 12px;
+      border:none;
+      outline: medium;
+      background-color: transparent;
+    }
+    </style>
+
+  <template>
+    <div id='heroContent'>
+    <paper-input label="{{placeHolder}}" type="{{type}}" id='input' value='{{text}}' color='{{color}}'></paper-input>
+    <input id = 'native' on-blur='onblur' on-focus='onfocus'></input>
+    </div>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: "dr-text-field",
+    behaviors: [HeroBehavior,HeroTextFieldBehavior],
+    on:function(json){
+      if (json.style == 'drlender') {
+        this.$.input.style.display = 'none';
+        this.$.native.style.display = 'block';
+        this.$.heroContent.style.border = "1px solid #"+this.json.color;
+        if (json.type == 'number') {
+            this.$.native.type = 'number';
+        };
+        if (json.placeHolder) {
+            this.$.native.placeholder = json.placeHolder;
+            this.placeHolder = json.placeHolder;
+            this.$.heroContent.style.top = parseFloat(this.$.heroContent.style.top)+10+'px';
+            this.$.heroContent.style.height = parseFloat(this.$.heroContent.style.height)-10+'px';
+        };
+        if (json.type) {
+          if (json.type == 'pin') {
+            this.$.native.type = 'tel';
+          }
+        };
+      };
+      if (json.size) {
+        this.$.native.style.fontSize = json.size+'px';
+      };
+      if(json.hideBottomLine){
+        var childs = this.$.input.$$('paper-input-container').querySelectorAll('div');
+        for (var i = 0; i < childs.length; i++) {
+          var childClass = childs[i].classList;
+          for (var j = 0; j < childClass.length; j++) {
+            var classStr = childClass[j];
+            if (classStr.indexOf('line')>0) {
+              childs[i].style.display = 'none';
+            };
+          };
+
+        };
+      }
+    },
+    ready:function(){
+    },
+    onfocus:function(){
+      if (this.json.style == 'drlender') {
+        this.$.heroContent.style.border = "1px solid #"+this.json.tintColor;
+      };
+      if (this.json.textFieldDidBeginEditing) {
+        this.json.textFieldDidBeginEditing.value = this.$.native.value;
+        this.json.textFieldDidBeginEditing.name = this.getName();
+        this.controller.on(this.json.textFieldDidBeginEditing)
+      };
+    },
+    onblur:function(){
+      if (this.json.style == 'drlender') {
+        this.$.heroContent.style.border = "1px solid #"+this.json.color;
+      };
+      if (this.json.textFieldDidEndEditing) {
+        this.json.textFieldDidEndEditing.value = this.$.native.value;
+        this.json.textFieldDidEndEditing.name = this.getName();
+        this.controller.on(this.json.textFieldDidEndEditing);
+      };
+    }
+  })
+</script>

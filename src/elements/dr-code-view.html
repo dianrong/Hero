@@ -1,0 +1,178 @@
+<!--
+BSD License
+Copyright (c) Hero software.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<dom-module id="dr-code-view">
+  <style type="text/css">
+    div{
+      display: inline-block;
+      position:absolute;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      width: 100%;
+      height: 100%;
+   }
+  paper-input {
+    display: 'block';
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    width: 1px;
+    height: 1px;
+    left:-12px;
+    border:none;
+    outline: medium;
+    background-color: transparent;
+  }
+  </style>
+  <template>
+    <paper-input id = 'input' on-blur='onblur' on-focus='onfocus' value='{{text}}'></paper-input>
+    <div id='heroContent' on-tap='focus'>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "dr-code-view",
+      behaviors: [HeroBehavior],
+      properties: {
+        text:{
+          type: String,
+          observer: 'textChange'
+        },
+        labels:{
+          type:Array
+        },
+        size:{
+          type:Object
+        }
+      },      
+      on: function(json) {
+        if (json.size) {
+          this.size = json.size;
+        };
+        if (json.count) {
+          var w = parseFloat(this.$.heroContent.style.width);
+          var h = parseFloat(this.$.heroContent.style.height);
+          this.labels = [];
+          for (var i = 0; i < json.count; i++) {
+            var p = document.createElement('p');
+            p.style.display = 'none';
+            p.style.position = 'absolute';
+            p.style.margin='0px';
+            p.style.padding='0px';
+            p.style.color='#000';
+            p.style.fontSize = this.size+'px';
+            p.style.textAlign = 'center';
+            p.style.height = h+'px';
+            p.style.width = w/json.count+'px';
+            p.style.left = i*(w/json.count)+'px';
+            p.innerHTML = '●';
+            this.$.heroContent.appendChild(p);
+            this.labels.push(p);
+            if (i == 0) {
+              var line = document.createElement('div');
+              line.style.display = 'block';
+              line.style.position = 'absolute';
+              line.style.border = '1px solid #e4e4e4';
+              line.style.height = (h-2)+'px';
+              line.style.width = (w-3)+'px';
+              line.style.left = '1px';
+              this.$.heroContent.appendChild(line);
+            }else{
+              var line = document.createElement('div');
+              line.style.display = 'block';
+              line.style.position = 'absolute';
+              line.style.backgroundColor = '#e4e4e4';
+              line.style.height = h+'px';
+              line.style.width = '1px';
+              line.style.left = i*(w/json.count)+'px';
+              this.$.heroContent.appendChild(line);
+            }
+          };
+        };
+        if (json.focus) {
+            var ua = navigator.userAgent.toLowerCase();
+            if(ua.indexOf("iphone") > 0){
+              this.$.input.focus();
+            }else if (ua.indexOf('chrome') > 0) {
+              var that = this;
+              setTimeout(function(){
+                that.$.input.focus();
+              },300);
+            }else{
+              var that = this;
+              setTimeout(function(){
+                that.$.input.focus();
+              },300);
+            }
+        };
+        if (json.blur) {
+          this.$.input.blur();
+        };
+      },
+      textChange: function(text){
+        if (!this.labels) {
+          return;
+        };
+        for (var i = 0; i < this.labels.length; i++) {
+          var label = this.labels[i];
+          if (i < text.length) {
+            label.style.display = 'block';
+            label.innerHTML = text.substr(i,1);
+          }else{
+            label.style.display = 'none';
+          }
+        };
+        if(this.json.textFieldDidEditing){
+          this.json.textFieldDidEditing.value = text;
+          this.json.textFieldDidEditing.name = this.getName();
+          this.controller.on(this.json.textFieldDidEditing);
+        }
+      },
+      focus:function(){
+        this.on({focus:true});
+      },
+      onfocus:function(){
+      },
+      onblur:function(){
+      },
+      ready: function(){
+        var that = this;
+        setTimeout(function(){
+          that.on({focus:true});
+        },200);
+      },
+      onTap: function(){
+
+      },
+    })
+</script>
