@@ -1,7 +1,0 @@
-{
-  "entrypoint": "index.html",
-  "shell": "src/hero-app.html",
-  "fragments": [
-  	"src/hero-web-app.html"
-  ]
-}

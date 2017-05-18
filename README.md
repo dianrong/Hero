@@ -1,38 +1,8 @@
 # **HERO 一个更好的移动跨平台开发方案**
 
-hero移动开发方案源起于点融网LB业务部门的一次无心的尝试，在点融的黑帮文化中发展出来的一个业界领先的开发方案。
+hero移动开发方案源起于点融网LB业务部门的一次大胆的尝试，在点融的黑帮文化中发展出来的一个业界领先的开发方案。
 
-------------------------
-先来一个类似产品的对比
-
-   | react native | weex | 小程序 | ionic | hero 
-----|------|-------|------|----|----|----
-性能 | 良  | 良 | 尚可 | 尚可 | 优
-布局 | 无序性能差 | 无序性能差 | 尚可 | 无序 | 类似iOS性能好
-设备能力 | 完全 | 完全 | 不完全 | 完全 | 完全
-开发成本 | 高级跨平台工程师 | 不详 | 高级web工程师 | 高级web工程师 | 初级js程序员
-开发工具 | 多种 | 不详 | 微信web开发工具 | 多种 | Hero开发者工具
-框架代码量 | 巨大 |巨大 | 非开源 | 大 | 少
-入门难度 | 难 | 难 | 普通 | 有点难 | 容易
-
-
-
-
-###### 解释上述表格
-- 性能
-react native和weex界面表现层是原生的，但是构造元素本身的操作，和元素的所有逻辑在js中，导致性能有影响。小程序还有一个h5 canvas转原生性能莫名其妙的慢的问题。Hero中元素的所有操作都在原生代码中，只有业务明确需要某个操作结果才会调用到js代码。
-- 布局能力
-CSS几乎可以表示一切形式的界面，无设计语言约束，但是最终效果有时候与平台的冲突会造成编程的困惑与体验的变差，react native 和weex的css依赖webview的渲染，再将结果发送给原生导致性能损失很大。微信在自家产品中的约束样式反而还不错。Hero是另辟蹊径定义了一套扩展后的frame布局，并且在各平台原生实现这套方案，布局能力达到并兼容原生app。
-- 设备能力
-微信提供了有限受控的设备能力，其它皆有完全的设备能力(系统支持)
-- 开发成本
-由于react native开发门槛较高，学习曲线很陡，特别是对移动开发人员，很难适应web开发模式，而web工程师对iOS本身的接口不熟悉，很难做出原生体验的app出来，weex应该也类似。还有不管是react native 还是weex所开发出来的页面不是完全跨平台的，它们只是开发方式是跨平台的，具体页面还是要分开开发。导致开发人员需求依旧那么多，甚至更多。而hero是一种依赖 **定义<->实现** 的开发方案，所开发的界面是平台无关的，再加上统一的元素定义格式，对于具体的页面开发人员来说，只是在配制显示的元素，非常简单。
-- 开发工具
-目前Hero的开发没有限定开发工具，sublime和atom都可以，调试就在chrome里面调试web页面就好了。集成编码、调试、托管服务端的Hero开发者工具正在开发过程当中。开发者工具本身也是用hero框架开发，目录在hero-js／heroapp当中。只需要切换到heroapp目录，使用nwjs .即可打开预览版本。
-- 框架代码量
-hero框架技术上并不复杂，核心逻辑代码不过200行。
-- 入门难度
-Hero框架中只有一个固定的controller，其它全部都是element，相比其它的MVP、MVVM、MVC有着复杂的逻辑关系，Hero中的模式就是** e **, **ee**,  **eeeeee...**,通通都是element，controller除了用来显示element，给element传递json数据之外就没有额外的逻辑了。element 中只有一个函数处理json对象，除此之外再无其它接口。每个element 都是绝对独立的，与其它元素毫无瓜葛。这样开发、测试元素都是及其简单的。
+###### 解释上述表
 
 ## Hero 框架图
 
@@ -40,87 +10,343 @@ Hero框架中只有一个固定的controller，其它全部都是element，相�
 ![Hero　extend](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/github2.png)
 ![Hero　App](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/github3.png)
 
-## 快速开始
-- 下载Hero代码，使用node her.js启动服务端。
-- 打开http://localhost:3000 可以看到一个Hero的主页，这里面有hero的概念展示、API doc等常用信息。
-- iOS版本中集成https://github.com/dianrong/hero-ios 这个SDK，然后用HeroViewController打开一个包含Hero元素的页面即可。
-- android版本中集成https://github.com/dianrong/hero-android 这个SDK，使用HeroActivity打开一个包含Hero元素的页面即可。
+# hero-cli
 
-## 快速开始做页面
-- 在chrome中访问http://localhost:3000/start.html
-- 使用sublime2 打开start代码文件夹，尝试修改index.html
+Create Hero apps with no build configuration.
 
+* [Getting Started](#getting-started) – How to create a new app.
+* [User Guide](#user-guide) – How to develop apps bootstrapped with Hero App.
 
-```
-	{
-		class:"HeroLabel",
-		name:"name",
-		textColor:"ffffff",
-		text:"Hello hero !",
-		size:22,
-		frame:{"w":"1x",h:"80"},
-		alignment:"center"
-	},
+Hero App works on Android, iOS, and Modem browser.<br>
+If something doesn’t work please [file an issue](https://github.com/hero-mobile/hero-cli/issues/new).
+
+## Quick Overview
+
+```sh
+npm install -g hero-mobile/hero-cli
+
+hero init my-app
+cd my-app/
+
+npm install
 
 ```
-**class** 一个界面元素必须包含的部分是，这指定了使用原生类的类型，
-**frame** 指定了元素在界面中的布局，这个布局是三个平台上统一实现的
-**name**  如果这个元素需要接收数据，那么给它设置一个name
-其它option的属性，取决于元素是否实现
+Once the installation is done, you can run some commands inside the project folder:
 
--------
+* `npm start` Start the application.
+* `npm run build` When you’re ready to deploy to production, create a minified bundle with this command.
+
+Run `npm start` and then open [http://localhost:3000/index.html](http://localhost:3000/index.html) to see your app.<br>
+
+<img src='https://github.com/hero-mobile/hero-cli/blob/master/images/readme/start-homepage.png?raw=true' width='367' height='663' alt='npm start'>
+
+### Get Started Immediately
+
+hero-cli using [Webpack](http://webpack.github.io/) to build the boudle for deployment while you don't need to install or configure them.<br>
+They are preconfigured and hidden so that you can focus on the code. Just create a project, and you’re good to go.
+
+## Getting Started
+
+### Installation
+
+Install it once globally:
+
+```sh
+npm install -g hero-mobile/hero-cli
+```
+
+**You’ll need to have Node >= 4 on your machine**.
+
+**We strongly recommend to use Node >= 6 and npm >= 3 for faster installation speed and better disk usage.** You can use [nvm](https://github.com/creationix/nvm#usage) to easily switch Node versions between different projects.
+
+### Creating an App
+
+To create a new app, run:
+
+```sh
+hero init my-app
+cd my-app
+```
+
+It will create a directory called `my-app` inside the current folder.<br>
+Inside that directory, it will generate the initial project structure and then you can run command `npm install` to install the dependencies manually:
 
 ```
-	setTimeout(function() {
-		API.out({command:'refresh'});
-	}, 2000);
+├── public
+│   ├── ...
+│   └── favicon.ico
+├── src
+│   ├── ...
+│   ├── environments
+│   │   ├── environment-dev.js
+│   │   └── environment-prod.js
+│   ├── index.html
+│   └── index.js
+├── .babelrc
+├── .editorconfig
+├── .eslintrc
+├── .gitattributes
+├── .gitignore
+├── .hero-cli.json
+├── package.json
+└── README.md
+```
+For the project to build, **these files must exist with exact filenames**:
 
-```
-开发过程中使用定时刷新实现即时性效果,开发完成后注释掉
-```
-	setTimeout(function() {
-		API.out({globle:{key:'finishLoading'}});
-	}, 100);
-```
-每个APP的第一个页面需要使用通过globle通知发送finishLoading告诉app关闭封面，上新功能的时候也可以发送一个showLoading来展示一个新功能slider，展示期间可以缓存新的HTML页面
-## 快速开始新的元素
-- 新建一个元素只需要继承自原生元素中有类似功能的一个元素，然后实现一个on方法，与此元素相关的一切功能都通过on方法中传递过来的json对象来实现。
-- on方法需要调用父类的on方法，基础的布局，背景，边框，hidden等属性都是在HeroView中已经实现好了，一般元素类只需要实现此元素特有的几个属性即可。
-- 例：
-```
-@implementation HeroLabel
--(void)on:(NSDictionary *)json{
-    [super on:json];
-    if (json[@"text"]) {
-       self.text = json[@"text"];
+* `src/index.html` is the entry page;
+* `src/index.js` is the JavaScript entry point.
+* `.hero-cli.json` is the configuration file for hero-cli build, it tell hero loads which configuration when you run command `hero start -e dev` or `hero build -e prod`(which is invoked by `npm start` or `npm build`) according to the value of `-e` parameter. For more build options please refer to [Build Scripts](#build-scripts).
+
+You can delete or rename the other files.
+
+* `public` assets like images inside this folder will **copied into the build folder untouched**. It will not be processed by Webpack.
+* `src` For faster rebuilds, only files inside this folder are processed by Webpack. You need to **put any JS and CSS files inside this folder**, or Webpack won’t see them.
+* `src/environments` where your configurations exists(these file path configured in file `.hero-cli.json`, you can change it later) and you can access the configuration values in JavaScript or HTML code. See [Adding Custom Environment Variables](#adding-custom-environment-variables).
+
+You may curious about where is the `pages/start.html`. Yes, it's generated by hero-cli. See [Generate HTML](#generate-html)
+
+## User Guide
+
+* [Generate HTML](#generate-html)
+* [Adding Custom Environment Variables](#adding-custom-environment-variables)
+  * [Referencing Environment Variables in the JavaScript](#referencing-environment-variables-in-the-javascript)
+  * [Referencing Environment Variables in the HTML](#referencing-environment-variables-in-the-html)
+  * [Adding Temporary Environment Variables In Your Shell](#adding-temporary-environment-variables-in-your-shell)
+  * [Adding Development Environment Variables via `.hero-cli.json`](#adding-development-environment-variables-via-hero-clijson)
+* [Proxying API Requests in Development](#proxying-api-requests-in-development)
+* [Build Scripts](#build-scripts)
+  * [`hero start`](#hero-start)
+  * [`hero build`](#hero-build)
+
+### Generate HTML
+
+Any JS file meet the following 2 conditions will treat as JavaScript entry point.
+
+* Declaration of `class` exists in the JS file.
+* `class` marked by [Decorator](https://github.com/wycats/javascript-decorators/blob/master/README.md) `@Entry` from [hero-cli/decorator](https://github.com/hero-mobile/hero-cli/blob/master/decorator.js).
+
+Which would cause a HTML file generated using Webpack plugin [html-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin):
+
+* Options specified in `@Entry(options)` will passed to `html-webpack-plugin` transparently.
+* Destination of generated HTML file will keep the file path structure of the Javascript entry, or you can override it using the option `filename` provided by `html-webpack-plugin`.
+* Generated HTML file can access the [Custom Environment Variables](#adding-custom-environment-variables).
+
+Example:<br>
+
+Below JavaScript file `src/pages/start.js` will generate a HTML file access by URL `/pages/start.html`, that's why we can visit [http://localhost:3000/pages/start.html](http://localhost:3000/pages/start.html).
+
+```javascript
+// content of file: src/pages/start.js
+import { Entry } from 'hero-cli/decorator';
+
+// class marked by @Entry
+// will generate HTML accessed by URL /pages/start.html
+// Equal to
+// @Entry({
+//   filename: 'pages/start.html'
+// })
+//
+@Entry()
+export class DecoratePage {
+
+    sayHello(data){
+      console.log('Hello Hero!')
     }
-    if (json[@"alignment"]) {
-        NSString *alignment = json[@"alignment"];
-        if ([alignment isEqualToString:@"center"]) {
-            self.textAlignment = NSTextAlignmentCenter;
-        }else if ([alignment isEqualToString:@"left"]){
-            self.textAlignment = NSTextAlignmentLeft;
-        }else if ([alignment isEqualToString:@"right"]){
-            self.textAlignment = NSTextAlignmentRight;
-        }
-    }
-    if (json[@"size"]) {
-        double size = ((NSNumber*)json[@"size"]).doubleValue;
-        self.font = [UIFont systemFontOfSize:size];
-    }
-    if (json[@"textColor"]) {
-        self.textColor = UIColorFromStr(json[@"textColor"]);
-    }
-    if (json[@"font"]) {
-        double size = ((NSNumber*)json[@"size"]).doubleValue;
-        if ([@"bold" isEqualToString:json[@"font"]]) {
-            self.font = [UIFont boldSystemFontOfSize:size];
-        }
-    }
+
 }
-@end
+
 ```
-	**android的实现稍微有一点不同，由于java没法多继承，也没办法往系统库中注入方法，所以在android中实现一个基础类需要在on方法中调用的HeroView的静态方法on(view,json)来完成view的初始化。如果新元素继承了Hero元素则只需要和iOS一样调用super.on(json)即可。**
+
+### Adding Custom Environment Variables
+Your project can consume variables declared in your environment as if they were declared locally in your JS files. By default you will have any environment variables starting with `HERO_APP_`. These environment variables can be useful for consuming sensitive data that lives outside of version control.<br>
+
+**The environment variables are embedded during the build time**.<br>
+
+#### Referencing Environment Variables in the JavaScript
+
+These environment variables will be defined for you on `process.env`.
+For example, having an environment variable named `HERO_APP_SECRET_CODE` will be exposed in your JS as `process.env.HERO_APP_SECRET_CODE`.
+
+```javascript
+
+console.log('Send Request with Token: '+ process.env.HERO_APP_SECRET_CODE);
+
+```
+
+There is also exist two special built-in environment variable called `NODE_ENV` and `HOME_PAGE`. <br>
+
+You can read it from `process.env.NODE_ENV`. When you run `hero start`, it is always equal to `'development'`, when you run `hero build` to make a production bundle, it is always equal to `'production'`. **You cannot override `NODE_ENV` manually**. This prevents developers from accidentally deploying a slow development build to production.<br>
+
+Having access to the `NODE_ENV` is also useful for performing actions conditionally:
+
+```javascript
+
+if (process.env.NODE_ENV !== 'production') {
+  analytics.disable();
+}
+
+```
+
+You can read variable `process.env.HOME_PAGE`, which value is equal to attribute `homepage` in file `.hero-cli.json`. This is useful for [Building for Relative Paths](#building-for-relative-paths).
+
+#### Referencing Environment Variables in the HTML
+For example, let’s define a variable `HERO_APP_WEBSITE_NAME` with value `Welcome Hero`, and you can access it like this:
+
+```html
+<title>%HERO_APP_WEBSITE_NAME%</title>
+
+```
+
+When you load the app in the browser and inspect the `<title>`, you will see its value set to `Welcome Hero`:
+
+```html
+<title>Welcome Hero</title>
+
+```
+#### Adding Temporary Environment Variables In Your Shell
+Defining environment variables can vary between OSes. It’s also important to know that this manner is temporary for the life of the shell session.
+
+##### Windows (cmd.exe)
+```
+set HERO_APP_SECRET_CODE=abcdef&&npm start
+
+```
+
+##### Linux, macOS (Bash)
+```
+HERO_APP_SECRET_CODE=abcdef npm start
+
+```
+
+#### Adding Development Environment Variables via `.hero-cli.json`
+Environment variables may varies from environments, such as `development`, `test` or `production`. <br>
+You can specify the mapping info in the `.hero-cli.json` file, tell hero-cli loads the corresponding variables into environment variables.<br>
+
+For example:
+
+Here is the content of `.hero-cli.json`
+```json
+{
+  "environments": {
+    "dev": "src/environments/environment-dev.js",
+    "prod": "src/environments/environment-prod.js"
+  }
+}
+
+```
+And here is the content of `src/environments/environment-prod.js`
+
+```javascript
+var environment = {
+    backendURL: 'http://www.my-website.com/api'
+};
+
+module.exports = environment;
+
+```
+
+When you run command `hero start -e dev` or `hero build -e dev`, all variables from `src/environments/environment-dev.js` can be accessed via `process.env`.
+
+### Proxying API Requests in Development
+People often serve the front-end React app from the same host and port as their backend implementation.
+For example, a production setup might look like this after the app is deployed:
+```
+/             - static server returns index.html with React app
+/todos        - static server returns index.html with React app
+/api/todos    - server handles any /api/* requests using the backend implementation
+
+```
+
+Such setup is not required. However, if you do have a setup like this, it is convenient to write requests like `fetch('/api/v2/todos')` without worrying about redirecting them to another host or port during development.
+
+To tell the development server to proxy any unknown requests to your API server in development, add a proxy field to your `.hero-cli.json`, for example:
+
+```json
+{
+  "proxy": {
+    "/api/v2": "https://localhost:4000",
+    "/feapi": "https://localhost:4001",
+  },
+  "environments": {
+    "dev": "src/environments/environment-dev.js",
+    "prod": "src/environments/environment-prod.js"
+  }
+}
+
+```
+
+This way, when you `fetch('/api/v2/todos')` in development, the development server will proxy your request to `http://localhost:4000/api/v2/todos`, and when you `fetch('/feapi/todos')`, the request will proxy to `https://localhost:4001`.
+
+
+### Build Scripts
+
+#### `hero start`
+
+Runs the app in development mode. And you can run `hero start -h` for help.<br>
+
+This command has one mandatory parameter `-e`.
+Usage: `hero start -e <env>`
+
+The available `<env>` values come from keys configured in attribute `environments` in file `.hero-cli.json`.
+
+hero-cli will load the corresponding configurations according to the `<env>` value by rules mentioned [above](#adding-development-environment-variables-via-hero-clijson).<br>
+
+You can using `-p` specify the listen port start the application.<br>
+
+```sh
+hero start -e dev -p 3000
+```
+When start successfully, the page will reload if you make edits in folder `src`.<br>
+You will see the build errors and lint warnings in the console.
+
+<img src='https://github.com/hero-mobile/hero-cli/blob/master/images/readme/syntax-error-terminal.png?raw=true' width='600' alt='syntax error terminal'>
+
+##### More Vaild options
+
+* `-e`<br>Environment name of the configuration when start the application
+* `-s`<br>Build the boundle as standalone version, which should run in Native App environment. That's to say, build version without libarary like [webcomponent polyfills](http://webcomponents.org/polyfills/) or [hero-js](https://github.com/hero-mobile/hero-js)(These libarary is necessary for Hero App run in web browser, not Native App).
+* `-i`<br>Inline JavaScript code into HTML. Default value is [false].
+* `-b`<br>Build pakcage only contain dependecies like hero-js or webcomponents, withou code in <you-project-path>/src folder. Default value is [false]
+* `-m`<br>Build without sourcemap. Default value is [false], will generate sourcemap.
+* `-f`<br>Generate AppCache file, default file name is "app.appcache". Default value is [false], will not generate this file.
+* `-n`<br>Rename file without hashcode. Default value is [false], cause filename with hashcode.
+
+
+#### `hero build`
+
+Builds the app for production to the `build` folder. Options as same as `hero start` mentioned [above](#more-vaild-options), or you can run `hero build -h` for help<br>
+The build is minified and the filenames include the hashes.<br>
+It correctly bundles Hero App in production mode and optimizes the build for the best performance.
+
+This command has one mandatory parameter `-e`.
+Usage: `hero build -e <env>`
+
+The available `<env>` values and configurations loading rules as same as [`hero start`](#hero start) .
+
+##### Building for Relative Paths
+By default, hero-cli produces a build assuming your app is hosted at the server root.
+To override this, specify the value of attribute **homepage** in configuration `.hero-cli.json` file. Accept values see [Webpack#publicpath](http://webpack.github.io/docs/configuration.html#output-publicpath).
+
+For example:
+
+Here is the content of `.hero-cli.json`
+```json
+{
+  "environments": {
+    "dev": "src/environments/environment-dev.js",
+    "prod": "src/environments/environment-prod.js"
+  },
+  "homepage": "/mkt/"
+}
+
+```
+Then you can access the `start.html` by URL `/mkt/pages/start.html`
+
+This will let Hero App correctly infer the root path to use in the generated HTML file.
+
+#### `hero init`
+You can run `hero build -h` for help. It will generate the initial project structure of Hero App. See [Creating an App](#creating-an-app).
+
 
 ## Hero 不止是一个开发框架，而是一个开发方案
 
@@ -144,15 +370,11 @@ Hero框架中只有一个固定的controller，其它全部都是element，相�
 ![Hero　Core](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/gif1.gif)
 
 #### 用户行为分析
-   在Hero框架中有一个理念，页面上不应该有任何的逻辑，页面（view controller\activity\page）只负责显示元素，元素本身只接json数据，界面显示成什么样子完全由接收到的json数据来决定，而且页面本身只有 in 和 out 两个函数分别对应元素反馈数据，和给元素的数据。我们在js中重载这两个函数，并将数据发送到日志服务器。就可以知道一个用户的所有操作，并可以对操作进行完整的回放。我们截取了一段不包含敏感数据的截屏如下图：
-![Hero　Core](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/gif2.gif)
+   在Hero框架中有一个理念，页面上不应该有任何的逻辑，页面（view controller\activity\page）只负责显示元素，元素本身只接json数据，界面显示成什么样子完全由接收到的json数据来决定，而且页面本身只有 in 和 out 两个函数分别对应元素反馈数据，和给元素的数据。我们在js中重载这两个函数，并将数据发送到日志服务器。就可以知道一个用户的所有操作，并可以对操作进行完整的回放。
 
 #### hero不只是一个前端框架
 Hero的核心理念是任何一个功能元素有且只有一个接口与外界交换数据。我曾经写了一个工具去检测一般项目中类之间的关系，方法是先找出当前项目的类列表，如果一个类中出现其它列表中的类就加1，结果是50个类平均结果是200左右，100个类平均结果是800左右，而且这个数以大于正比例曲线增长。大家可以想象一下一个新人面对一个大项目时候的囧迫，这简直是一张大网。传统的面向对象编程也许本身没有问题，但是在实际的的实践中遭遇了巨大的挑战，函数式编程是一种，而Hero是另外一种。
 在服务端，Hero也有一个初步但是完整的实践，目录在hero-js/server当中。这里不再展开叙述。
-
-## Hero milestone
-![Hero　Core](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/github4.png)
 
 
 
