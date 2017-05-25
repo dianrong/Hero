@@ -5,11 +5,9 @@ hero移动开发方案源起于点融网LB业务部门的一次大胆的尝试�
 
 ## Hero 框架图
 
-![Hero　Core](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/github1.png)
-![Hero　extend](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/github2.png)
-![Hero　App](https://raw.githubusercontent.com/dianrong/hero/master/heroapp/images/github3.png)
+![Hero　Core](http://chuantu.biz/t5/59/1491534443x2890174334.png)
 
-# hero-cli
+# 快速开始hero-cli
 
 Create Hero apps with no build configuration.
 
@@ -375,13 +373,27 @@ You can run `hero build -h` for help. It will generate the initial project struc
 Hero的核心理念是任何一个功能元素有且只有一个接口与外界交换数据。我曾经写了一个工具去检测一般项目中类之间的关系，方法是先找出当前项目的类列表，如果一个类中出现其它列表中的类就加1，结果是50个类平均结果是200左右，100个类平均结果是800左右，而且这个数以大于正比例曲线增长。大家可以想象一下一个新人面对一个大项目时候的囧迫，这简直是一张大网。传统的面向对象编程也许本身没有问题，但是在实际的的实践中遭遇了巨大的挑战，函数式编程是一种，而Hero是另外一种。
 在服务端，Hero也有一个初步但是完整的实践，目录在hero-js/server当中。这里不再展开叙述。
 
+## Hero技术委员会
+| name           | 技术领域                                     |
+|----------------|-------------------------------------------------|
+| Andrew  		 | 提供技术资源                  |
+| shaohua.yang   | review代码，负责技术规范		                   |
+| 刘国平          | 架构                         |
+| 朱靥超	     | Hero-iOS                                   |
+| 朱成尧	     | Hero-js                                   |
+| 蔡欣	     | Hero-android                                   |
+| 胡本绿	     | Hero-Cli                                   |
 
 
-## 贡献
+## 贡献代码
+
 提交到 
-https://github.com/dianrong/Hero
-https://github.com/dianrong/Hero-ios
-https://github.com/dianrong/Hero-android
+https://github.com/dianrong/Hero  
+
+https://github.com/dianrong/Hero-ios  
+
+https://github.com/dianrong/Hero-android 
+
 
 
 
